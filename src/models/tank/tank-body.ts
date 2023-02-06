@@ -51,7 +51,7 @@ export class TankBody extends Model{
         this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
 
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.arrBuffer)
-        this.gl.vertexAttribPointer(this.aLocations['aPos'], 3, this.gl.FLOAT, false, 0, 0)
+        this.gl.vertexAttribPointer(this.aLocations['aPos'], 2, this.gl.FLOAT, false, 0, 0)
         this.gl.enableVertexAttribArray(this.aLocations['aPos'])
 
         this.gl.drawElements(this.gl.TRIANGLES, 9, this.gl.UNSIGNED_BYTE, 0)

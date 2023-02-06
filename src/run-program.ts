@@ -1,12 +1,12 @@
 //@ts-ignore
-import vertCode from "./static/shader-source/shader.v.glsl";
+import vertCode from './static/shader-source/shader.v.glsl';
 //@ts-ignore
-import fragCode from "./static/shader-source/shader.f.glsl";
-import {Matrix4, radians, Vector3, Vector4} from "@math.gl/core";
-import {createSquare} from "./models/square";
-import {GameMap} from "./models/game-map";
-import {TAttributeLocations, TUniformLocations} from "./models/types";
-import {TankBody} from "./models/tank/tank-body";
+import fragCode from './static/shader-source/shader.f.glsl';
+import {Matrix4, radians, Vector3, Vector4} from '@math.gl/core';
+import {GameMap} from './models/game-map';
+import {TAttributeLocations, TUniformLocations} from './models/types';
+import {TankBody} from './models/tank/tank-body';
+import {Model} from './models/Model';
 
 const compileShaderShortcut = (gl: WebGLRenderingContext, shaderSource: string, shaderType: number): WebGLShader => {
     const shader = gl.createShader(shaderType)!
@@ -44,13 +44,13 @@ const configAndGetUniformLocations = (gl: WebGLRenderingContext, shaderProgram: 
         u_Color: gl.getUniformLocation(shaderProgram, 'u_Color')!
     }
 }
-
-
 const initShaderInData = (gl: WebGLRenderingContext, uLocations: TUniformLocations, aLocations: TAttributeLocations) => {
     gl.uniformMatrix4fv(uLocations['model'], false, new Matrix4(Matrix4.IDENTITY))
     gl.uniformMatrix4fv(uLocations['view'], false, new Matrix4().lookAt({ eye: new Vector3(0.0, 0.0, 4.0), center: new Vector3(0.0, 0.0, 0.0), up: new Vector3(0.0, 1.0, 0.0) }))
     gl.uniformMatrix4fv(uLocations['projection'], false, new Matrix4().perspective({ fovy: radians(60.0), aspect: gl.canvas.width/gl.canvas.height, near: 0.01, far: 100.0 }))
 }
+
+
 
 
 
@@ -63,25 +63,11 @@ const runProgram = (gl: WebGLRenderingContext) => {
 
     const shaderProgram = createShaderProgramShortcut(gl, [vertShader, fragShader])
 
-
-    const vertices = createSquare()
-    const vertex_buffer = createArrayBufferShortcut(gl, vertices)
-
     gl.useProgram(shaderProgram)
 
     const aLocations = configAndGetAttribLocations(gl, shaderProgram)
     const uLocations = configAndGetUniformLocations(gl, shaderProgram)
-
     initShaderInData(gl, uLocations, aLocations)
-
-    //also init
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer)
-    gl.vertexAttribPointer(aLocations['aPos'], 3, gl.FLOAT, false, 0, 0)
-    gl.enableVertexAttribArray(aLocations['aPos'])
-
-
-
-
 
     const map = new GameMap(gl);
     const tankBody = new TankBody(gl, aLocations, uLocations)
@@ -90,12 +76,8 @@ const runProgram = (gl: WebGLRenderingContext) => {
         gl.clearColor(0, 0, 0, 1)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-        // gl.uniform4fv(colorLoc, map.color)
-        // map.glDrawMap(uLocations['u_Color'])
-        // gl.drawArrays(gl.TRIANGLES, 0, 6)
         gl.uniform4fv(uLocations['u_Color'], new Vector4(1.0, 0.0, 1.0, 1.0))
         tankBody.draw()
-
 
         window.requestAnimationFrame(draw);
     }
