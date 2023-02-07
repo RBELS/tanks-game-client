@@ -1,6 +1,5 @@
 import './index.scss'
 import runProgram from './run-program'
-import './controller/controller'
 
 import { Matrix4, Vector3, radians } from '@math.gl/core'
 

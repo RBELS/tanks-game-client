@@ -1,5 +1,6 @@
 import {TAttributeLocations, TModelProps, TUniformLocations} from "../types";
 import {Model} from "../Model";
+import {Vector4} from '@math.gl/core';
 
 export const createTankBody = (size: number): TModelProps => {
     const props: TModelProps = {
@@ -25,7 +26,7 @@ export class TankBody extends Model{
     private readonly indexBuffer: WebGLBuffer
     private readonly gl: WebGLRenderingContext
     private readonly aLocations: TAttributeLocations
-    private readonly uLocatipns: TUniformLocations
+    private readonly uLocations: TUniformLocations
 
     constructor(gl: WebGLRenderingContext, aLocations: TAttributeLocations, uLocations: TUniformLocations) {
         super();
@@ -33,7 +34,7 @@ export class TankBody extends Model{
         this.indexBuffer = gl.createBuffer()!
         this.gl = gl
         this.aLocations = aLocations
-        this.uLocatipns = uLocations
+        this.uLocations = uLocations
 
         const tankBody = createTankBody(1.0)
 
@@ -53,6 +54,8 @@ export class TankBody extends Model{
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.arrBuffer)
         this.gl.vertexAttribPointer(this.aLocations['aPos'], 2, this.gl.FLOAT, false, 0, 0)
         this.gl.enableVertexAttribArray(this.aLocations['aPos'])
+
+        this.gl.uniform4fv(this.uLocations['u_Color'], new Vector4(0.2, 1.0, 1.0, 1.0))
 
         this.gl.drawElements(this.gl.TRIANGLES, 9, this.gl.UNSIGNED_BYTE, 0)
 

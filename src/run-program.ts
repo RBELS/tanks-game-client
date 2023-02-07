@@ -2,12 +2,11 @@
 import vertCode from './static/shader-source/shader.v.glsl'
 //@ts-ignore
 import fragCode from './static/shader-source/shader.f.glsl'
-import {Matrix4, radians, Vector2, Vector3, Vector4} from '@math.gl/core'
+import {Matrix4, radians, Vector2, Vector3} from '@math.gl/core'
 import {GameMap} from './models/game-map'
 import {TAttributeLocations, TUniformLocations} from './models/types'
-import {TankBody} from './models/tank/tank-body'
-import {Model} from './models/Model'
-import {Player} from './controller/player';
+import {Player} from './controller/player'
+import Controller from './controller/controller'
 
 const compileShaderShortcut = (gl: WebGLRenderingContext, shaderSource: string, shaderType: number): WebGLShader => {
     const shader = gl.createShader(shaderType)!
@@ -23,13 +22,7 @@ const createShaderProgramShortcut = (gl: WebGLRenderingContext, shaders: WebGLSh
     gl.linkProgram(shaderProgram)
     return shaderProgram
 }
-const createArrayBufferShortcut = (gl: WebGLRenderingContext, arrBuffer: Float32Array): WebGLBuffer => {
-    const glBuffer = gl.createBuffer()!
-    gl.bindBuffer(gl.ARRAY_BUFFER, glBuffer)
-    gl.bufferData(gl.ARRAY_BUFFER, arrBuffer, gl.STATIC_DRAW)
-    gl.bindBuffer(gl.ARRAY_BUFFER, null)
-    return glBuffer
-}
+
 const configAndGetAttribLocations = (gl: WebGLRenderingContext, shaderProgram: WebGLProgram): TAttributeLocations => {
     gl.enable(gl.DEPTH_TEST)
 
@@ -65,18 +58,16 @@ const runProgram = (gl: WebGLRenderingContext) => {
     const uLocations = configAndGetUniformLocations(gl, shaderProgram)
 
     const player = new Player(gl, uLocations, aLocations, new Vector2(0, 0), 0)
-    player.setMatrices()
-
-
     const map = new GameMap(gl);
-    const tankBody = new TankBody(gl, aLocations, uLocations)
+    const controller = new Controller(player)
 
     const draw = (timestamp: number) => {
-        gl.clearColor(0, 0, 0, 1)
+        gl.clearColor(40/255, 42/255, 54/255, 1)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-        gl.uniform4fv(uLocations['u_Color'], new Vector4(0.2, 1.0, 1.0, 1.0))//move to tank body
-        tankBody.draw()
+        player.setMatrices()
+        player.draw()
+        controller.update()
 
         window.requestAnimationFrame(draw);
     }
