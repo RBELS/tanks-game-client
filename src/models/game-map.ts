@@ -4,7 +4,7 @@ import {Vector4} from "@math.gl/core";
 /**
  * Generates map of provided size.
  */
-const getMapArrBuffer = (size: number): Float32Array => {
+export const getMapArrBuffer = (size: number): Float32Array => {
     const square = createSquare()
     for (let i = 0;i < square.length;i++) {
         square[i] *= size

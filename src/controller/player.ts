@@ -1,4 +1,4 @@
-import {TAttributeLocations, TUniformLocations} from '../models/types';
+import {TAttributeLocations, TMatrixBundle, TUniformLocations} from '../models/types'
 import {Matrix4, radians, Vector2, Vector3, Vector4} from '@math.gl/core'
 import {Model} from '../models/Model';
 import {TankBody} from '../models/tank/tank-body';
@@ -9,7 +9,7 @@ import Vector from '@math.gl/core/dist/classes/base/vector'
 export class Player extends Model{
     private static readonly UP_VEC = new Vector3(0.0, 1.0, 0.0)
 
-    private pos: Vector2
+    private _pos: Vector2
     private _bodyAngle?: number //made null because both value are used in setter
     private bodyDir: Vector2 | null
 
@@ -18,9 +18,8 @@ export class Player extends Model{
     private readonly aLocations: TAttributeLocations
     private readonly uLocations: TUniformLocations
 
-    private projectionMatrix: Matrix4
-
     private tankBody: TankBody
+    private _matrices: TMatrixBundle
 
     constructor(gl: WebGLRenderingContext, uLocations: TUniformLocations, aLocations: TAttributeLocations,
                 startPos: Vector2, startBodyAngle: number, playerConfig?: PlayerConfig)
@@ -29,7 +28,7 @@ export class Player extends Model{
 
         this.aLocations = aLocations
         this.uLocations = uLocations
-        this.pos = new Vector2().copy(startPos)
+        this._pos = new Vector2().copy(startPos)
 
         this.bodyDir = null
         this.bodyAngle = startBodyAngle// INVOKES SETTERS THAT UPDATES THE BODY DIR VECTOR
@@ -40,8 +39,9 @@ export class Player extends Model{
         } else {
             this._config = new PlayerConfig()
         }
-        this.projectionMatrix = this.updateProjectionMatrix()
 
+        this._matrices = {}
+        this._matrices.projection = this.updateProjectionMatrix()
         this.tankBody = new TankBody(gl, aLocations, uLocations)
     }
 
@@ -51,34 +51,39 @@ export class Player extends Model{
         const { gl } = this
 
         const modelMatrix = new Matrix4(Matrix4.IDENTITY)
+        this._matrices.model = modelMatrix
 
-        modelMatrix.translate(new Vector4(this.pos.x, this.pos.y, 0, 0))
+        modelMatrix.translate(new Vector4(this._pos.x, this._pos.y, 0, 0))
         modelMatrix.rotateZ(radians(this.bodyAngle))
 
         gl.uniformMatrix4fv(this.uLocations['model'], false, modelMatrix)
 
         const viewMatrix = new Matrix4().lookAt({
-            eye: new Vector3(0, 0, this.config.scale), //debug
-            center: new Vector3(0, 0, 0),           //debug
-            // eye: new Vector3(this.pos.x, this.pos.y, this.config.scale),
-            // center: new Vector3(this.pos.x, this.pox.y, 0),
+            // eye: new Vector3(0, 0, this.config.scale), //debug
+            // center: new Vector3(0, 0, 0),           //debug
+            eye: new Vector3(this._pos.x, this._pos.y, this.config.scale),
+            center: new Vector3(this._pos.x, this._pos.y, 0),
             up: Player.UP_VEC
         })
+        this._matrices.view = viewMatrix
         gl.uniformMatrix4fv(this.uLocations['view'], false, viewMatrix)
-        gl.uniformMatrix4fv(this.uLocations['projection'], false, this.projectionMatrix)
+
+        gl.uniformMatrix4fv(this.uLocations['projection'], false, this._matrices.projection!)
+
+        gl.uniform1i(this.uLocations['drawMesh'], 0)
     }
 
     /*
     * Sets the projection matrix and returns it for convenience.
     */
     private updateProjectionMatrix(): Matrix4 {
-        this.projectionMatrix = new Matrix4().perspective({
+        this._matrices.projection = new Matrix4().perspective({
             fovy: radians(60.0),
             aspect: this.gl.canvas.width/this.gl.canvas.height,
             near: 0.01,
             far: 100.0
         })
-        return this.projectionMatrix
+        return this._matrices.projection
     }
 
     get bodyAngle(): number {
@@ -107,13 +112,21 @@ export class Player extends Model{
         this._config = value;
     }
 
+    get pos(): Vector2 {
+        return this._pos
+    }
+
     draw(): void {
         this.tankBody.draw()
     }
 
     public move(distance: number) {
         if (!this.bodyDir) return
-        this.pos.addScaledVector(this.bodyDir, distance)
+        this._pos.addScaledVector(this.bodyDir, distance)
+    }
+
+    get matrices(): TMatrixBundle {
+        return this._matrices
     }
 }
 

@@ -20,7 +20,7 @@ export const createTankBody = (size: number): TModelProps => {
     return props
 }
 
-export class TankBody extends Model{
+export class TankBody extends Model {
 
     private readonly arrBuffer: WebGLBuffer
     private readonly indexBuffer: WebGLBuffer

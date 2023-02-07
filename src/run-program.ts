@@ -7,6 +7,7 @@ import {GameMap} from './models/game-map'
 import {TAttributeLocations, TUniformLocations} from './models/types'
 import {Player} from './controller/player'
 import Controller from './controller/controller'
+import Background from './models/background/background'
 
 const compileShaderShortcut = (gl: WebGLRenderingContext, shaderSource: string, shaderType: number): WebGLShader => {
     const shader = gl.createShader(shaderType)!
@@ -24,7 +25,7 @@ const createShaderProgramShortcut = (gl: WebGLRenderingContext, shaders: WebGLSh
 }
 
 const configAndGetAttribLocations = (gl: WebGLRenderingContext, shaderProgram: WebGLProgram): TAttributeLocations => {
-    gl.enable(gl.DEPTH_TEST)
+    // gl.enable(gl.DEPTH_TEST)
 
     return {
         aPos: gl.getAttribLocation(shaderProgram, 'aPos'),
@@ -35,7 +36,9 @@ const configAndGetUniformLocations = (gl: WebGLRenderingContext, shaderProgram: 
         model: gl.getUniformLocation(shaderProgram, 'model')!,
         view: gl.getUniformLocation(shaderProgram, 'view')!,
         projection: gl.getUniformLocation(shaderProgram, 'projection')!,
-        u_Color: gl.getUniformLocation(shaderProgram, 'u_Color')!
+        u_Color: gl.getUniformLocation(shaderProgram, 'u_Color')!,
+        playerPos: gl.getUniformLocation(shaderProgram, 'playerPos')!,
+        drawMesh: gl.getUniformLocation(shaderProgram, 'drawMesh')!
     }
 }
 
@@ -60,10 +63,15 @@ const runProgram = (gl: WebGLRenderingContext) => {
     const player = new Player(gl, uLocations, aLocations, new Vector2(0, 0), 0)
     const map = new GameMap(gl);
     const controller = new Controller(player)
+    player.setMatrices()
+    const background = new Background(gl, uLocations, aLocations, player.matrices)
 
     const draw = (timestamp: number) => {
-        gl.clearColor(40/255, 42/255, 54/255, 1)
+        gl.clearColor(98/255, 114/255, 164/255, 1)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
+
+        background.setMatrices(player.pos)
+        background.draw()
 
         player.setMatrices()
         player.draw()
