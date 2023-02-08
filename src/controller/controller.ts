@@ -1,17 +1,21 @@
 import {Player} from './player'
+import WebsocketConnection from './api'
 
 class Controller {
     private static readonly ROTATE_SPEED = 80 // DEG/SEC
     private static readonly MOVEMENT_SPEED = 6 // UNITS/SEC
+    private static readonly ALLOWED_KEYSET = new Set<string>(['w', 's', 'a', 'd'])
 
     private keySet: Set<string>
     private player: Player
+    private connection: WebsocketConnection
 
     private lastUpdated?: number
 
-    constructor(player: Player) {
+    constructor(player: Player, connection: WebsocketConnection) {
         this.keySet = new Set<string>()
         this.player = player
+        this.connection = connection
         this.prepareController()
     }
 
@@ -23,13 +27,17 @@ class Controller {
     }
 
     private registerKeys(ev: KeyboardEvent) {
-        this.keySet.add(ev.key)
-        console.log(this.keySet)
+        if (Controller.ALLOWED_KEYSET.has(ev.key) && !this.keySet.has(ev.key)) {
+            this.keySet.add(ev.key)
+            this.connection.sendState(this.keySet)
+        }
     }
 
     private unregisterKeys(ev: KeyboardEvent) {
-        this.keySet.delete(ev.key)
-        console.log(this.keySet)
+        if (Controller.ALLOWED_KEYSET.has(ev.key)) {
+            this.keySet.delete(ev.key)
+            this.connection.sendState(this.keySet)
+        }
     }
 
     public update() {

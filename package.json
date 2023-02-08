@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/sockjs-client": "^1.5.1",
     "css-loader": "^6.7.3",
     "html-webpack-plugin": "^5.5.0",
     "raw-loader": "^4.0.2",
@@ -23,7 +24,10 @@
   },
   "dependencies": {
     "@math.gl/core": "^3.6.3",
+    "@stomp/stompjs": "^7.0.0",
     "axios": "^1.2.2",
-    "ts-loader": "^9.4.2"
+    "sockjs-client": "^1.6.1",
+    "ts-loader": "^9.4.2",
+    "websocket": "^1.0.34"
   }
 }

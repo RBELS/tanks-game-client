@@ -27,6 +27,4 @@ void main() {
         gl_FragColor = u_Color;
     }
 
-
-//    gl_FragColor = u_Color;
 }

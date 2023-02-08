@@ -8,6 +8,7 @@ import {TAttributeLocations, TUniformLocations} from './models/types'
 import {Player} from './controller/player'
 import Controller from './controller/controller'
 import Background from './models/background/background'
+import WebsocketConnection from './controller/api'
 
 const compileShaderShortcut = (gl: WebGLRenderingContext, shaderSource: string, shaderType: number): WebGLShader => {
     const shader = gl.createShader(shaderType)!
@@ -62,7 +63,10 @@ const runProgram = (gl: WebGLRenderingContext) => {
 
     const player = new Player(gl, uLocations, aLocations, new Vector2(0, 0), 0)
     const map = new GameMap(gl);
-    const controller = new Controller(player)
+
+    const websocketConnection = new WebsocketConnection()
+    const controller = new Controller(player, websocketConnection)
+
     player.setMatrices()
     const background = new Background(gl, uLocations, aLocations, player.matrices)
 
