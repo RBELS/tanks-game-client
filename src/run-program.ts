@@ -64,8 +64,9 @@ const runProgram = (gl: WebGLRenderingContext) => {
     const player = new Player(gl, uLocations, aLocations, new Vector2(0, 0), 0)
     const map = new GameMap(gl);
 
-    const websocketConnection = new WebsocketConnection()
+    const websocketConnection = new WebsocketConnection(player) //check this!!!
     const controller = new Controller(player, websocketConnection)
+    websocketConnection.controller = controller
 
     player.setMatrices()
     const background = new Background(gl, uLocations, aLocations, player.matrices)

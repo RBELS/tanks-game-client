@@ -1,6 +1,10 @@
 
 import SockJS from 'sockjs-client'
 import {CompatClient, Stomp} from '@stomp/stompjs'
+import Controller from '../controller'
+import {Player} from '../player'
+import {Vector2} from '@math.gl/core'
+import controller from '../controller'
 
 //@allow-js
 const interceptEvent = (target: Window | Document, eventName: string, newHandler: (ev: Event) => void) => {
@@ -18,13 +22,25 @@ class WebsocketConnection {
     private socket: WebSocket
     private stompClient: CompatClient
 
-    constructor() {
+    private _controller?: Controller // not sure if i need it here
+    private player: Player
+
+    constructor(player: Player) {
+        this.player = player;
         this.socket = new SockJS('http://localhost:8080/registersocket')
         this.stompClient = Stomp.over(this.socket)
 
         this.stompClient.connect({}, () => {
-            this.stompClient.subscribe('/topic/gamestate', function (newstate) {
-                console.log(JSON.parse(newstate.body))
+            this.stompClient.subscribe('/topic/gamestate', (newstate) => {
+                if (!this._controller) return
+                const stateObj = JSON.parse(newstate.body)
+
+
+                //WILL BE SEPARATE METHOD
+                this.player.pos = new Vector2(stateObj.playerPos[0], stateObj.playerPos[1])
+                this.player.bodyDir = stateObj.bodyMoveDir;
+                this._controller.lastUpdated = Date.now()
+                //WILL BE SEPARATE METHOD
             })
         })
     }
@@ -36,6 +52,11 @@ class WebsocketConnection {
             input: keyArr
         }))
     }
+
+    set controller(value: Controller) {
+        this._controller = value
+    }
+
 }
 
 export default WebsocketConnection

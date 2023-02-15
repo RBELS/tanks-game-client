@@ -3,20 +3,29 @@ import WebsocketConnection from './api'
 
 class Controller {
     private static readonly ROTATE_SPEED = 80 // DEG/SEC
-    private static readonly MOVEMENT_SPEED = 6 // UNITS/SEC
+    private static readonly MOVEMENT_SPEED = 6.0 // UNITS/SEC
     private static readonly ALLOWED_KEYSET = new Set<string>(['w', 's', 'a', 'd'])
 
     private keySet: Set<string>
     private player: Player
     private connection: WebsocketConnection
 
-    private lastUpdated?: number
+    private _lastUpdated?: number
 
     constructor(player: Player, connection: WebsocketConnection) {
         this.keySet = new Set<string>()
         this.player = player
         this.connection = connection
         this.prepareController()
+    }
+
+
+    get lastUpdated(): number {
+        return this._lastUpdated!
+    }
+
+    set lastUpdated(value: number) {
+        this._lastUpdated = value
     }
 
     private prepareController() {
@@ -41,40 +50,15 @@ class Controller {
     }
 
     public update() {
-        if (this.lastUpdated == undefined) this.lastUpdated = window.performance.now()
+        if (this._lastUpdated == undefined) this._lastUpdated = window.performance.now()
 
-        const currentTime = window.performance.now()
-        const deltaTime = currentTime - this.lastUpdated
+        const currentTime = Date.now()//window.performance.now()
+        const deltaTime = currentTime - this._lastUpdated
 
+        const moveDistance = deltaTime*Controller.MOVEMENT_SPEED/1000
+        this.player.move(moveDistance)
 
-        let rotation
-        let totalAngle = 0
-        if (this.keySet.has('a')) {
-            if (!rotation) rotation = deltaTime * Controller.ROTATE_SPEED / 1000
-            totalAngle += rotation
-        }
-        if (this.keySet.has('d')) {
-            if (!rotation) rotation = deltaTime * Controller.ROTATE_SPEED / 1000
-            totalAngle -= rotation
-        }
-        if (totalAngle != 0) this.player.bodyAngle += totalAngle
-
-
-        let distance
-        let totalDistance = 0
-
-        if (this.keySet.has('w')) {
-            if (!distance) distance = deltaTime * Controller.MOVEMENT_SPEED / 1000
-            totalDistance += distance
-        }
-        if (this.keySet.has('s')) {
-            if (!distance) distance = deltaTime * Controller.MOVEMENT_SPEED / 1000
-            totalDistance -= distance
-        }
-        if (totalDistance != 0) this.player.move(totalDistance)
-
-
-        this.lastUpdated = currentTime
+        this._lastUpdated = currentTime
     }
 }
 

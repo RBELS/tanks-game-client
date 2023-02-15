@@ -11,7 +11,7 @@ export class Player extends Model{
 
     private _pos: Vector2
     private _bodyAngle?: number //made null because both value are used in setter
-    private bodyDir: Vector2 | null
+    private _bodyDir: Vector2 | null
 
     private _config: PlayerConfig
     private gl: WebGLRenderingContext
@@ -30,7 +30,7 @@ export class Player extends Model{
         this.uLocations = uLocations
         this._pos = new Vector2().copy(startPos)
 
-        this.bodyDir = null
+        this._bodyDir = null
         this.bodyAngle = startBodyAngle// INVOKES SETTERS THAT UPDATES THE BODY DIR VECTOR
 
         this.gl = gl
@@ -95,8 +95,8 @@ export class Player extends Model{
         bufVec3.rotateZ({
             radians: radians(this._bodyAngle!) //must not be null
         })
-        this.bodyDir = new Vector2(bufVec3.x, bufVec3.y)
-        return this.bodyDir
+        this._bodyDir = new Vector2(bufVec3.x, bufVec3.y)
+        return this._bodyDir
     }
 
     set bodyAngle(value: number) {
@@ -116,19 +116,38 @@ export class Player extends Model{
         return this._pos
     }
 
+    set pos(value: Vector2) {
+        this._pos = value
+    }
+
     draw(): void {
         this.tankBody.draw()
     }
 
     public move(distance: number) {
-        if (!this.bodyDir) return
-        this._pos.addScaledVector(this.bodyDir, distance)
+        if (!this._bodyDir) return
+        this._pos.addScaledVector(this._bodyDir, distance)
     }
 
     get matrices(): TMatrixBundle {
         return this._matrices
     }
+
+
+    get bodyDir(): Vector2 | null {
+        return this._bodyDir
+    }
+
+    set bodyDir(value: Vector2 | null) {
+        this._bodyDir = value
+    }
 }
+
+
+
+
+
+
 
 
 
