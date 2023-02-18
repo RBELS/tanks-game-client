@@ -5,6 +5,7 @@ import Controller from '../controller'
 import {Player} from '../player'
 import {Vector2} from '@math.gl/core'
 import controller from '../controller'
+import {GameState} from './api-types'
 
 //@allow-js
 const interceptEvent = (target: Window | Document, eventName: string, newHandler: (ev: Event) => void) => {
@@ -33,15 +34,15 @@ class WebsocketConnection {
         this.stompClient.connect({}, () => {
             this.stompClient.subscribe('/topic/gamestate', (newstate) => {
                 if (!this._controller) return
-                const stateObj = JSON.parse(newstate.body)
+                const stateObj: GameState = JSON.parse(newstate.body)
+                const curPlayerState = stateObj.players['rebel']
 
 
                 //WILL BE SEPARATE METHOD
-                this.player.pos = new Vector2(stateObj.playerPos[0], stateObj.playerPos[1])
-                this.player.moveMultiplier = stateObj.moveMultiplier
-                console.log(stateObj.bodyMoveDir)
-                this.player.bodyAngle = stateObj.bodyAngle
-                this.player.bodyRotateMultiplier = stateObj.bodyRotateMultiplier
+                this.player.pos = new Vector2(curPlayerState.pos[0], curPlayerState.pos[1])
+                this.player.moveMultiplier = curPlayerState.moveMultiplier
+                this.player.bodyAngle = curPlayerState.bodyAngle
+                this.player.bodyRotateMultiplier = curPlayerState.bodyRotateMultiplier
                 this._controller.lastUpdated = Date.now()
                 //WILL BE SEPARATE METHOD
             })
