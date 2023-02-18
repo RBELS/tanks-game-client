@@ -2,13 +2,13 @@
 import vertCode from './static/shader-source/shader.v.glsl'
 //@ts-ignore
 import fragCode from './static/shader-source/shader.f.glsl'
-import {Matrix4, radians, Vector2, Vector3} from '@math.gl/core'
-import {GameMap} from './models/game-map'
+import {Vector2} from '@math.gl/core'
 import {TAttributeLocations, TUniformLocations} from './models/types'
 import {Player} from './controller/player'
 import Controller from './controller/controller'
 import Background from './models/background/background'
 import WebsocketConnection from './controller/api'
+import Axios from 'axios'
 
 const compileShaderShortcut = (gl: WebGLRenderingContext, shaderSource: string, shaderType: number): WebGLShader => {
     const shader = gl.createShader(shaderType)!
@@ -46,9 +46,12 @@ const configAndGetUniformLocations = (gl: WebGLRenderingContext, shaderProgram: 
 
 
 
+export let nickname = ''
 
+const runProgram = async (gl: WebGLRenderingContext) => {
+    //api instance
+    const api = Axios.create({ baseURL: 'http://192.168.1.36:8080/', withCredentials: true })
 
-const runProgram = (gl: WebGLRenderingContext) => {
     gl.viewport(0,0,gl.canvas.width,gl.canvas.height)
 
     const vertShader = compileShaderShortcut(gl, vertCode, gl.VERTEX_SHADER)
@@ -61,8 +64,9 @@ const runProgram = (gl: WebGLRenderingContext) => {
     const aLocations = configAndGetAttribLocations(gl, shaderProgram)
     const uLocations = configAndGetUniformLocations(gl, shaderProgram)
 
-    const player = new Player(gl, uLocations, aLocations, new Vector2(0, 0), 0)
-    const map = new GameMap(gl);
+    nickname = prompt('Enter nickname:')!
+    const userRegistered = await api.post('/login', { username: nickname })
+    const player = new Player(gl, uLocations, aLocations, new Vector2(0, 0), 0, nickname)
 
     const websocketConnection = new WebsocketConnection(player) //check this!!!
     const controller = new Controller(player, websocketConnection)

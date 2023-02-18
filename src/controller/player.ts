@@ -14,6 +14,7 @@ export class Player extends Model{
     private _bodyDir: Vector2 | null
     private _moveMultiplier: number
     private _bodyRotateMultiplier: number
+    private _nickname: string
 
     private _config: PlayerConfig
     private gl: WebGLRenderingContext
@@ -24,7 +25,7 @@ export class Player extends Model{
     private _matrices: TMatrixBundle
 
     constructor(gl: WebGLRenderingContext, uLocations: TUniformLocations, aLocations: TAttributeLocations,
-                startPos: Vector2, startBodyAngle: number, playerConfig?: PlayerConfig)
+                startPos: Vector2, startBodyAngle: number, nickname: string, playerConfig?: PlayerConfig)
     {
         super();
 
@@ -47,6 +48,7 @@ export class Player extends Model{
         this.tankBody = new TankBody(gl, aLocations, uLocations)
         this._moveMultiplier = 0
         this._bodyRotateMultiplier = 0
+        this._nickname = nickname
     }
 
 
@@ -166,6 +168,11 @@ export class Player extends Model{
 
     set bodyRotateMultiplier(value: number) {
         this._bodyRotateMultiplier = value
+    }
+
+
+    get nickname(): string {
+        return this._nickname
     }
 }
 

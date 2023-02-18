@@ -29,10 +29,9 @@ class Controller {
     }
 
     private prepareController() {
-        window.onload = (ev) => {
-            document.onkeydown = (ev) => this.registerKeys(ev)
-            document.onkeyup = (ev) => this.unregisterKeys(ev)
-        }
+        console.log('window onload assigned')
+        document.onkeydown = (ev) => this.registerKeys(ev)
+        document.onkeyup = (ev) => this.unregisterKeys(ev)
     }
 
     private registerKeys(ev: KeyboardEvent) {

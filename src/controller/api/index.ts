@@ -30,12 +30,14 @@ class WebsocketConnection {
         this.player = player;
         this.socket = new SockJS('http://192.168.1.36:8080/registersocket')
         this.stompClient = Stomp.over(this.socket)
+        //@ts-ignore
+        this.stompClient.debug = () => {}
 
         this.stompClient.connect({}, () => {
             this.stompClient.subscribe('/topic/gamestate', (newstate) => {
                 if (!this._controller) return
                 const stateObj: GameState = JSON.parse(newstate.body)
-                const curPlayerState = stateObj.players['rebel']
+                const curPlayerState = stateObj.players[this.player.nickname]
 
 
                 //WILL BE SEPARATE METHOD
@@ -50,9 +52,10 @@ class WebsocketConnection {
     }
 
     public sendState(keySet: Set<string>) {
+        console.log('sending data')
         const keyArr = Array.from(keySet.keys())
         this.stompClient.send('/app/update', {}, JSON.stringify({
-            name: 'rebel',
+            name: this.player.nickname,
             input: keyArr
         }))
     }
