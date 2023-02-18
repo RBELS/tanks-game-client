@@ -12,6 +12,8 @@ export class Player extends Model{
     private _pos: Vector2
     private _bodyAngle?: number //made null because both value are used in setter
     private _bodyDir: Vector2 | null
+    private _moveMultiplier: number
+    private _bodyRotateMultiplier: number
 
     private _config: PlayerConfig
     private gl: WebGLRenderingContext
@@ -43,6 +45,8 @@ export class Player extends Model{
         this._matrices = {}
         this._matrices.projection = this.updateProjectionMatrix()
         this.tankBody = new TankBody(gl, aLocations, uLocations)
+        this._moveMultiplier = 0
+        this._bodyRotateMultiplier = 0
     }
 
 
@@ -126,7 +130,20 @@ export class Player extends Model{
 
     public move(distance: number) {
         if (!this._bodyDir) return
-        this._pos.addScaledVector(this._bodyDir, distance)
+        this._pos.addScaledVector(this._bodyDir, distance*this._moveMultiplier)
+    }
+
+    public rotateBody(angle: number) {
+        if (!this._bodyAngle) return
+        this.bodyAngle = this.bodyAngle + angle * this._bodyRotateMultiplier
+    }
+
+    get moveMultiplier(): number {
+        return this._moveMultiplier
+    }
+
+    set moveMultiplier(value: number) {
+        this._moveMultiplier = value
     }
 
     get matrices(): TMatrixBundle {
@@ -140,6 +157,15 @@ export class Player extends Model{
 
     set bodyDir(value: Vector2 | null) {
         this._bodyDir = value
+    }
+
+
+    get bodyRotateMultiplier(): number {
+        return this._bodyRotateMultiplier
+    }
+
+    set bodyRotateMultiplier(value: number) {
+        this._bodyRotateMultiplier = value
     }
 }
 

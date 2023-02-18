@@ -58,6 +58,8 @@ class Controller {
         const moveDistance = deltaTime*Controller.MOVEMENT_SPEED/1000
         this.player.move(moveDistance)
 
+        this.player.rotateBody(deltaTime*Controller.ROTATE_SPEED/1000)
+
         this._lastUpdated = currentTime
     }
 }

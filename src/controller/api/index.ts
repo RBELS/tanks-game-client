@@ -27,7 +27,7 @@ class WebsocketConnection {
 
     constructor(player: Player) {
         this.player = player;
-        this.socket = new SockJS('http://localhost:8080/registersocket')
+        this.socket = new SockJS('http://192.168.1.36:8080/registersocket')
         this.stompClient = Stomp.over(this.socket)
 
         this.stompClient.connect({}, () => {
@@ -38,7 +38,10 @@ class WebsocketConnection {
 
                 //WILL BE SEPARATE METHOD
                 this.player.pos = new Vector2(stateObj.playerPos[0], stateObj.playerPos[1])
-                this.player.bodyDir = stateObj.bodyMoveDir;
+                this.player.moveMultiplier = stateObj.moveMultiplier
+                console.log(stateObj.bodyMoveDir)
+                this.player.bodyAngle = stateObj.bodyAngle
+                this.player.bodyRotateMultiplier = stateObj.bodyRotateMultiplier
                 this._controller.lastUpdated = Date.now()
                 //WILL BE SEPARATE METHOD
             })
