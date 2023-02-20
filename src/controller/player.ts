@@ -16,35 +16,38 @@ export class Player extends Model{
     private _bodyRotateMultiplier: number
     private _nickname: string
 
-    private _config: PlayerConfig
-    private gl: WebGLRenderingContext
-    private readonly aLocations: TAttributeLocations
-    private readonly uLocations: TUniformLocations
+    private _gl: WebGLRenderingContext
+    private readonly _aLocations: TAttributeLocations
+    private readonly _uLocations: TUniformLocations
 
     private tankBody: TankBody
     private _matrices: TMatrixBundle
 
+    private readonly isMainPlayer: boolean
+
     constructor(gl: WebGLRenderingContext, uLocations: TUniformLocations, aLocations: TAttributeLocations,
-                startPos: Vector2, startBodyAngle: number, nickname: string, playerConfig?: PlayerConfig)
+                startPos: Vector2, startBodyAngle: number, nickname: string, matrixBundle?: TMatrixBundle)
     {
         super();
 
-        this.aLocations = aLocations
-        this.uLocations = uLocations
+        this._aLocations = aLocations
+        this._uLocations = uLocations
         this._pos = new Vector2().copy(startPos)
 
         this._bodyDir = null
         this.bodyAngle = startBodyAngle// INVOKES SETTERS THAT UPDATES THE BODY DIR VECTOR
 
-        this.gl = gl
-        if (playerConfig) {
-            this._config = playerConfig
+        this._gl = gl
+
+        if (!matrixBundle) {
+            this.isMainPlayer = true
+            this._matrices = {}
+            this._matrices.projection = this.updateProjectionMatrix()
         } else {
-            this._config = new PlayerConfig()
+            this.isMainPlayer = false
+            this._matrices = matrixBundle
         }
 
-        this._matrices = {}
-        this._matrices.projection = this.updateProjectionMatrix()
         this.tankBody = new TankBody(gl, aLocations, uLocations)
         this._moveMultiplier = 0
         this._bodyRotateMultiplier = 0
@@ -54,7 +57,7 @@ export class Player extends Model{
 
 
     public setMatrices() {
-        const { gl } = this
+        const { _gl } = this
 
         const modelMatrix = new Matrix4(Matrix4.IDENTITY)
         this._matrices.model = modelMatrix
@@ -62,21 +65,23 @@ export class Player extends Model{
         modelMatrix.translate(new Vector4(this._pos.x, this._pos.y, 0, 0))
         modelMatrix.rotateZ(radians(this.bodyAngle))
 
-        gl.uniformMatrix4fv(this.uLocations['model'], false, modelMatrix)
+        _gl.uniformMatrix4fv(this._uLocations['model'], false, modelMatrix)
 
-        const viewMatrix = new Matrix4().lookAt({
-            // eye: new Vector3(0, 0, this.config.scale), //debug
-            // center: new Vector3(0, 0, 0),           //debug
-            eye: new Vector3(this._pos.x, this._pos.y, this.config.scale),
-            center: new Vector3(this._pos.x, this._pos.y, 0),
-            up: Player.UP_VEC
-        })
-        this._matrices.view = viewMatrix
-        gl.uniformMatrix4fv(this.uLocations['view'], false, viewMatrix)
+        if (this.isMainPlayer) {
+            const viewMatrix = new Matrix4().lookAt({
+                eye: new Vector3(this._pos.x, this._pos.y, 10.0),
+                center: new Vector3(this._pos.x, this._pos.y, 0),
+                up: Player.UP_VEC
+            })
+            this._matrices.view = viewMatrix
+            _gl.uniformMatrix4fv(this._uLocations['view'], false, viewMatrix)
+        } else {
+            _gl.uniformMatrix4fv(this._uLocations['view'], false, this._matrices.view!)
+        }
 
-        gl.uniformMatrix4fv(this.uLocations['projection'], false, this._matrices.projection!)
 
-        gl.uniform1i(this.uLocations['drawMesh'], 0)
+        _gl.uniformMatrix4fv(this._uLocations['projection'], false, this._matrices.projection!)
+        _gl.uniform1i(this._uLocations['drawMesh'], 0)
     }
 
     /*
@@ -85,7 +90,7 @@ export class Player extends Model{
     private updateProjectionMatrix(): Matrix4 {
         this._matrices.projection = new Matrix4().perspective({
             fovy: radians(60.0),
-            aspect: this.gl.canvas.width/this.gl.canvas.height,
+            aspect: this._gl.canvas.width/this._gl.canvas.height,
             near: 0.01,
             far: 100.0
         })
@@ -110,14 +115,6 @@ export class Player extends Model{
         this.updateBodyDirVec()
     }
 
-    get config(): PlayerConfig {
-        return this._config;
-    }
-
-    set config(value: PlayerConfig) {
-        this._config = value;
-    }
-
     get pos(): Vector2 {
         return this._pos
     }
@@ -132,6 +129,7 @@ export class Player extends Model{
 
     public move(distance: number) {
         if (!this._bodyDir) return
+
         this._pos.addScaledVector(this._bodyDir, distance*this._moveMultiplier)
     }
 
@@ -173,6 +171,19 @@ export class Player extends Model{
 
     get nickname(): string {
         return this._nickname
+    }
+
+
+    get gl(): WebGLRenderingContext {
+        return this._gl
+    }
+
+    get aLocations(): TAttributeLocations {
+        return this._aLocations
+    }
+
+    get uLocations(): TUniformLocations {
+        return this._uLocations
     }
 }
 

@@ -1,7 +1,10 @@
 import {Model} from '../Model'
 import {TAttributeLocations, TMatrixBundle, TUniformLocations} from '../types'
-import {getMapArrBuffer} from '../game-map'
 import {Matrix4, radians, Vector2, Vector3, Vector4} from '@math.gl/core'
+import {Player} from '../../controller/player'
+import {getMapArrBuffer} from '../gamemap'
+
+
 
 class Background extends Model {
     private readonly gl: WebGLRenderingContext
@@ -10,16 +13,18 @@ class Background extends Model {
     private readonly arrBuffer: WebGLBuffer
     private matrices: TMatrixBundle
     private readonly playerMatrixBundle: TMatrixBundle
+    private readonly player: Player
 
     constructor(gl: WebGLRenderingContext, uLocations: TUniformLocations, aLocations: TAttributeLocations,
-    playerMatrixBundle: TMatrixBundle)
+    player: Player)
     {
         super()
         this.gl = gl
         this.uLocations = uLocations
         this.aLocations = aLocations
 
-        this.playerMatrixBundle = playerMatrixBundle
+        this.player = player
+        this.playerMatrixBundle = player.matrices
         const vertices = getMapArrBuffer(10.0)
         this.arrBuffer = gl.createBuffer()!
         gl.bindBuffer(gl.ARRAY_BUFFER, this.arrBuffer)
@@ -30,7 +35,7 @@ class Background extends Model {
     }
 
 
-    public setMatrices(playerPos: Vector2) {
+    public setMatrices() {
         const { gl } = this
 
         const modelMatrix = new Matrix4(Matrix4.IDENTITY)
@@ -43,7 +48,7 @@ class Background extends Model {
         gl.uniformMatrix4fv(this.uLocations['projection'], false, projectionMatrix)
 
 
-        gl.uniform2fv(this.uLocations['playerPos'], playerPos)
+        gl.uniform2fv(this.uLocations['playerPos'], this.player.pos)
         gl.uniform1i(this.uLocations['drawMesh'], 1) //not 0 stands for true; 0 stands for false
     }
 

@@ -61,4 +61,7 @@ export class TankBody extends Model {
 
     }
 
+    public setMatrices(): void {
+    }
+
 }

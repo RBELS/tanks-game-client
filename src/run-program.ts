@@ -2,13 +2,10 @@
 import vertCode from './static/shader-source/shader.v.glsl'
 //@ts-ignore
 import fragCode from './static/shader-source/shader.f.glsl'
-import {Vector2} from '@math.gl/core'
+
 import {TAttributeLocations, TUniformLocations} from './models/types'
-import {Player} from './controller/player'
-import Controller from './controller/controller'
-import Background from './models/background/background'
-import WebsocketConnection from './controller/api'
 import Axios from 'axios'
+import {GameMap} from './models/gamemap'
 
 const compileShaderShortcut = (gl: WebGLRenderingContext, shaderSource: string, shaderType: number): WebGLShader => {
     const shader = gl.createShader(shaderType)!
@@ -65,26 +62,18 @@ const runProgram = async (gl: WebGLRenderingContext) => {
     const uLocations = configAndGetUniformLocations(gl, shaderProgram)
 
     nickname = prompt('Enter nickname:')!
+
     const userRegistered = await api.post('/login', { username: nickname })
-    const player = new Player(gl, uLocations, aLocations, new Vector2(0, 0), 0, nickname)
+    const gameMap = new GameMap(gl, nickname, uLocations, aLocations)
 
-    const websocketConnection = new WebsocketConnection(player) //check this!!!
-    const controller = new Controller(player, websocketConnection)
-    websocketConnection.controller = controller
-
-    player.setMatrices()
-    const background = new Background(gl, uLocations, aLocations, player.matrices)
 
     const draw = (timestamp: number) => {
         gl.clearColor(98/255, 114/255, 164/255, 1)
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
 
-        background.setMatrices(player.pos)
-        background.draw()
-
-        player.setMatrices()
-        player.draw()
-        controller.update()
+        gameMap.setMatrices()
+        gameMap.draw()
+        gameMap.updateWithPredictions()
 
         window.requestAnimationFrame(draw);
     }

@@ -1,9 +1,9 @@
 import {Player} from './player'
-import WebsocketConnection from './api'
+import WebsocketConnection, {latency} from './api/api'
 
 class Controller {
     private static readonly ROTATE_SPEED = 80 // DEG/SEC
-    private static readonly MOVEMENT_SPEED = 6.0 // UNITS/SEC
+    public static MOVEMENT_SPEED = 6 // UNITS/SEC
     private static readonly ALLOWED_KEYSET = new Set<string>(['w', 's', 'a', 'd'])
 
     private keySet: Set<string>
@@ -49,17 +49,16 @@ class Controller {
     }
 
     public update() {
-        if (this._lastUpdated == undefined) this._lastUpdated = window.performance.now()
+        if (this._lastUpdated == undefined) this._lastUpdated = Date.now()
 
-        const currentTime = Date.now()//window.performance.now()
+        const currentTime = Date.now()
         const deltaTime = currentTime - this._lastUpdated
+        this._lastUpdated = currentTime
 
         const moveDistance = deltaTime*Controller.MOVEMENT_SPEED/1000
         this.player.move(moveDistance)
 
         this.player.rotateBody(deltaTime*Controller.ROTATE_SPEED/1000)
-
-        this._lastUpdated = currentTime
     }
 }
 
