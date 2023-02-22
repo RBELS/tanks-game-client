@@ -2,11 +2,9 @@ import {Player} from '../controller/player'
 import {TAttributeLocations, TUniformLocations} from './types'
 import {Vector2} from '@math.gl/core'
 import WebsocketConnection from '../controller/api/api'
-import Controller from '../controller/controller'
 import Background from './background/background'
 import {Model} from './Model'
 import {createSquare} from './square'
-import {types} from 'sass'
 
 /**
  * Generates map of provided size.

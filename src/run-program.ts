@@ -41,9 +41,8 @@ const configAndGetUniformLocations = (gl: WebGLRenderingContext, shaderProgram: 
 }
 
 
-
-
 export let nickname = ''
+
 
 const runProgram = async (gl: WebGLRenderingContext) => {
     //api instance

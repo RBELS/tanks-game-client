@@ -1,4 +1,3 @@
-
 import SockJS from 'sockjs-client'
 import {CompatClient, Stomp} from '@stomp/stompjs'
 import Controller from '../controller'
@@ -6,7 +5,7 @@ import {Player} from '../player'
 import {Vector2} from '@math.gl/core'
 import {GameState, PlayerState} from './api-types'
 
-//@allow-js
+
 const interceptEvent = (target: Window | Document, eventName: string, newHandler: (ev: Event) => void) => {
     //@ts-ignore
     const existingHandler = target[eventName]
@@ -18,6 +17,8 @@ const interceptEvent = (target: Window | Document, eventName: string, newHandler
 }
 
 export let latency = 0
+let sumDistance = 0
+let count = 0
 
 class WebsocketConnection {
     private socket: WebSocket
@@ -41,7 +42,7 @@ class WebsocketConnection {
                 if (!this._controller) return
                 const stateObj: GameState = JSON.parse(newstate.body)
 
-                console.log(stateObj.players['rebel'].pos)
+                // latency = 14.6
 
                 for (const somePlayerNickname in stateObj.players) {
                     let somePlayer = this.allPlayers.get(somePlayerNickname)

@@ -51,7 +51,7 @@ class Controller {
     public update() {
         if (this._lastUpdated == undefined) this._lastUpdated = Date.now()
 
-        const currentTime = Date.now()
+        const currentTime = Date.now() + latency
         const deltaTime = currentTime - this._lastUpdated
         this._lastUpdated = currentTime
 
