@@ -17,8 +17,6 @@ const interceptEvent = (target: Window | Document, eventName: string, newHandler
 }
 
 export let latency = 0
-let sumDistance = 0
-let count = 0
 
 class WebsocketConnection {
     private socket: WebSocket
@@ -31,7 +29,7 @@ class WebsocketConnection {
     constructor(actingPlayer: Player, allPlayers: Map<string, Player>) {
         this.actingPlayer = actingPlayer;
         this.allPlayers = allPlayers
-        this.socket = new SockJS('http://192.168.1.36:8080/registersocket')
+        this.socket = new SockJS('http://localhost:8080/registersocket')//http://192.168.1.36:8080/registersocket
         this.stompClient = Stomp.over(this.socket)
         this._controller = new Controller(actingPlayer, this)
         //@ts-ignore
@@ -69,11 +67,18 @@ class WebsocketConnection {
         })
     }
 
-    public sendState(keySet: Set<string>) {
+    public sendPlayerPos(keySet: Set<string>) {
         const keyArr = Array.from(keySet.keys())
-        this.stompClient.send('/app/update', {}, JSON.stringify({
+        this.stompClient.send('/app/updatePos', {}, JSON.stringify({
             name: this.actingPlayer.nickname,
             input: keyArr
+        }))
+    }
+
+    public sendPlayerTopAngle(topAngle: number) {
+        this.stompClient.send('/app/updateTopAngle', {}, JSON.stringify({
+            name: this.actingPlayer.nickname,
+            topAngle
         }))
     }
 

@@ -6,6 +6,7 @@ import fragCode from './static/shader-source/shader.f.glsl'
 import {TAttributeLocations, TUniformLocations} from './models/types'
 import Axios from 'axios'
 import {GameMap} from './models/gamemap'
+import {Vector2} from '@math.gl/core'
 
 const compileShaderShortcut = (gl: WebGLRenderingContext, shaderSource: string, shaderType: number): WebGLShader => {
     const shader = gl.createShader(shaderType)!
@@ -36,7 +37,7 @@ const configAndGetUniformLocations = (gl: WebGLRenderingContext, shaderProgram: 
         projection: gl.getUniformLocation(shaderProgram, 'projection')!,
         u_Color: gl.getUniformLocation(shaderProgram, 'u_Color')!,
         playerPos: gl.getUniformLocation(shaderProgram, 'playerPos')!,
-        drawMesh: gl.getUniformLocation(shaderProgram, 'drawMesh')!
+        drawMesh: gl.getUniformLocation(shaderProgram, 'drawMesh')!,
     }
 }
 
@@ -46,7 +47,7 @@ export let nickname = ''
 
 const runProgram = async (gl: WebGLRenderingContext) => {
     //api instance
-    const api = Axios.create({ baseURL: 'http://192.168.1.36:8080/', withCredentials: true })
+    const api = Axios.create({ baseURL: 'http://localhost:8080/', withCredentials: true })//http://192.168.1.36:8080/
 
     gl.viewport(0,0,gl.canvas.width,gl.canvas.height)
 

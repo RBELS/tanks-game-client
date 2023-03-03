@@ -3,11 +3,12 @@ import {Matrix4, radians, Vector2, Vector3, Vector4} from '@math.gl/core'
 import {Model} from '../models/Model';
 import {TankBody} from '../models/tank/tank-body';
 import Vector from '@math.gl/core/dist/classes/base/vector'
+import {TankTop} from '../models/tank/tank-top'
 
 
 
 export class Player extends Model{
-    private static readonly UP_VEC = new Vector3(0.0, 1.0, 0.0)
+    public static readonly UP_VEC = new Vector3(0.0, 1.0, 0.0)
 
     private _pos: Vector2
     private _bodyAngle?: number //made null because both value are used in setter
@@ -21,6 +22,7 @@ export class Player extends Model{
     private readonly _uLocations: TUniformLocations
 
     private tankBody: TankBody
+    private tankTop: TankTop
     private _matrices: TMatrixBundle
 
     private readonly isMainPlayer: boolean
@@ -49,6 +51,7 @@ export class Player extends Model{
         }
 
         this.tankBody = new TankBody(gl, aLocations, uLocations)
+        this.tankTop = new TankTop(gl, aLocations, uLocations)
         this._moveMultiplier = 0
         this._bodyRotateMultiplier = 0
         this._nickname = nickname
@@ -125,6 +128,7 @@ export class Player extends Model{
 
     draw(): void {
         this.tankBody.draw()
+        this.tankTop.draw()
     }
 
     public move(distance: number) {
@@ -187,27 +191,3 @@ export class Player extends Model{
     }
 }
 
-
-
-
-
-
-
-
-
-
-export class PlayerConfig {
-    private _scale: number
-    constructor() {
-        this._scale = 10
-    }
-
-
-    get scale(): number {
-        return this._scale;
-    }
-
-    set scale(value: number) {
-        this._scale = value;
-    }
-}
