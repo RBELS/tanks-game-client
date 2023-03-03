@@ -21,6 +21,9 @@ export class Player extends Model{
     private readonly _aLocations: TAttributeLocations
     private readonly _uLocations: TUniformLocations
 
+    private _tankTopAngle: number
+    private _tankTopRotateMultiplier: number;
+
     private tankBody: TankBody
     private tankTop: TankTop
     private _matrices: TMatrixBundle
@@ -36,9 +39,6 @@ export class Player extends Model{
         this._uLocations = uLocations
         this._pos = new Vector2().copy(startPos)
 
-        this._bodyDir = null
-        this.bodyAngle = startBodyAngle// INVOKES SETTERS THAT UPDATES THE BODY DIR VECTOR
-
         this._gl = gl
 
         if (!matrixBundle) {
@@ -50,11 +50,17 @@ export class Player extends Model{
             this._matrices = matrixBundle
         }
 
-        this.tankBody = new TankBody(gl, aLocations, uLocations)
-        this.tankTop = new TankTop(gl, aLocations, uLocations)
+        this.tankBody = new TankBody(gl, aLocations, uLocations, this.matrices)
+        this.tankTop = new TankTop(gl, aLocations, uLocations, this.matrices)
+
+        this._bodyDir = null
+        this.bodyAngle = startBodyAngle// INVOKES SETTER THAT UPDATES THE BODY DIR VECTOR
         this._moveMultiplier = 0
         this._bodyRotateMultiplier = 0
         this._nickname = nickname
+
+        this._tankTopAngle = 0
+        this._tankTopRotateMultiplier = 0
     }
 
 
@@ -66,7 +72,7 @@ export class Player extends Model{
         this._matrices.model = modelMatrix
 
         modelMatrix.translate(new Vector4(this._pos.x, this._pos.y, 0, 0))
-        modelMatrix.rotateZ(radians(this.bodyAngle))
+        // modelMatrix.rotateZ(radians(this.bodyAngle))
 
         _gl.uniformMatrix4fv(this._uLocations['model'], false, modelMatrix)
 
@@ -114,7 +120,8 @@ export class Player extends Model{
     }
 
     set bodyAngle(value: number) {
-        this._bodyAngle = value;
+        this._bodyAngle = value
+        this.tankBody.rotateAngle = value
         this.updateBodyDirVec()
     }
 
@@ -140,6 +147,11 @@ export class Player extends Model{
     public rotateBody(angle: number) {
         if (!this._bodyAngle) return
         this.bodyAngle = this.bodyAngle + angle * this._bodyRotateMultiplier
+    }
+
+    public rotateTop(angle: number) {
+        if (!this._tankTopAngle) return
+        this.tankTopAngle = this.tankTopAngle + angle * this._tankTopRotateMultiplier
     }
 
     get moveMultiplier(): number {
@@ -188,6 +200,25 @@ export class Player extends Model{
 
     get uLocations(): TUniformLocations {
         return this._uLocations
+    }
+
+
+    get tankTopAngle(): number {
+        return this._tankTopAngle
+    }
+
+    set tankTopAngle(value: number) {
+        this.tankTop.rotateAngle = value
+        this._tankTopAngle = value
+    }
+
+
+    get tankTopRotateMultiplier(): number {
+        return this._tankTopRotateMultiplier
+    }
+
+    set tankTopRotateMultiplier(value: number) {
+        this._tankTopRotateMultiplier = value
     }
 }
 

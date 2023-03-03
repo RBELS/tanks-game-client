@@ -43,6 +43,7 @@ class WebsocketConnection {
                 // latency = 14.6
 
                 for (const somePlayerNickname in stateObj.players) {
+                    console.log(stateObj.players[somePlayerNickname])
                     let somePlayer = this.allPlayers.get(somePlayerNickname)
                     const somePlayerState = stateObj.players[somePlayerNickname]
                     if (!somePlayer) {
@@ -61,6 +62,8 @@ class WebsocketConnection {
                     somePlayer.moveMultiplier = somePlayerState.moveMultiplier
                     somePlayer.bodyAngle = somePlayerState.bodyAngle
                     somePlayer.bodyRotateMultiplier = somePlayerState.bodyRotateMultiplier
+                    somePlayer.tankTopAngle = somePlayerState.topRotateAngle
+                    somePlayer.tankTopRotateMultiplier = somePlayerState.topRotateMultiplier
                 }
                 this._controller.lastUpdated = Date.now()
             })

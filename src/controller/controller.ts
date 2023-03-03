@@ -5,6 +5,7 @@ import {toDegrees, Vector2, Vector3} from '@math.gl/core'
 
 class Controller {
     private static readonly ROTATE_SPEED = 80 // DEG/SEC
+    private static readonly TOP_ROTATE_SPEED = 160 // DEG/SEC
     public static MOVEMENT_SPEED = 6 // UNITS/SEC
     private static readonly ALLOWED_KEYSET = new Set<string>(['w', 's', 'a', 'd'])
 
@@ -84,6 +85,7 @@ class Controller {
         this.player.move(moveDistance)
 
         this.player.rotateBody(deltaTime*Controller.ROTATE_SPEED/1000)
+        this.player.rotateTop(deltaTime*Controller.TOP_ROTATE_SPEED/1000)
     }
 }
 

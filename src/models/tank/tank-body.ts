@@ -1,6 +1,6 @@
-import {TAttributeLocations, TModelProps, TUniformLocations} from "../types";
+import {TAttributeLocations, TMatrixBundle, TModelProps, TUniformLocations} from "../types"
 import {Model} from "../Model";
-import {Vector4} from '@math.gl/core';
+import {Matrix4, toRadians, Vector4} from '@math.gl/core'
 
 export const createTankBody = (size: number): TModelProps => {
     const props: TModelProps = {
@@ -28,13 +28,18 @@ export class TankBody extends Model {
     private readonly aLocations: TAttributeLocations
     private readonly uLocations: TUniformLocations
 
-    constructor(gl: WebGLRenderingContext, aLocations: TAttributeLocations, uLocations: TUniformLocations) {
+    private readonly matrices: TMatrixBundle
+    private _rotateAngle: number
+
+    constructor(gl: WebGLRenderingContext, aLocations: TAttributeLocations, uLocations: TUniformLocations, matrices: TMatrixBundle) {
         super();
         this.arrBuffer = gl.createBuffer()!
         this.indexBuffer = gl.createBuffer()!
         this.gl = gl
         this.aLocations = aLocations
         this.uLocations = uLocations
+        this._rotateAngle = 0
+        this.matrices = matrices
 
         const tankBody = createTankBody(1.0)
 
@@ -49,19 +54,30 @@ export class TankBody extends Model {
     }
 
     public draw(): void {
-        this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
+        const {gl} = this
+        let newMatrix = new Matrix4().copy(this.matrices.model!)
+        newMatrix = newMatrix.rotateZ(toRadians((this._rotateAngle)))
+        gl.uniformMatrix4fv(this.uLocations['model'], false, newMatrix)
 
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.arrBuffer)
-        this.gl.vertexAttribPointer(this.aLocations['aPos'], 2, this.gl.FLOAT, false, 0, 0)
-        this.gl.enableVertexAttribArray(this.aLocations['aPos'])
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.arrBuffer)
+        gl.vertexAttribPointer(this.aLocations['aPos'], 2, gl.FLOAT, false, 0, 0)
+        gl.enableVertexAttribArray(this.aLocations['aPos'])
+        gl.uniform4fv(this.uLocations['u_Color'], new Vector4(0.2, 1.0, 1.0, 1.0))
+        gl.drawElements(gl.TRIANGLES, 9, gl.UNSIGNED_BYTE, 0)
 
-        this.gl.uniform4fv(this.uLocations['u_Color'], new Vector4(0.2, 1.0, 1.0, 1.0))
-
-        this.gl.drawElements(this.gl.TRIANGLES, 9, this.gl.UNSIGNED_BYTE, 0)
-
+        gl.uniformMatrix4fv(this.uLocations['model'], false, this.matrices.model!)
     }
 
     public setMatrices(): void {
     }
 
+
+    get rotateAngle(): number {
+        return this._rotateAngle
+    }
+
+    set rotateAngle(value: number) {
+        this._rotateAngle = value
+    }
 }

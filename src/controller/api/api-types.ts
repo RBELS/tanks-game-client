@@ -3,6 +3,8 @@ export type PlayerState = {
     bodyAngle: number
     bodyRotateMultiplier: number
     moveMultiplier: number
+    topRotateAngle: number
+    topRotateMultiplier: number
 }
 
 export type GameState = {
