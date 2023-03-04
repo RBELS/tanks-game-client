@@ -29,7 +29,7 @@ class WebsocketConnection {
     constructor(actingPlayer: Player, allPlayers: Map<string, Player>) {
         this.actingPlayer = actingPlayer;
         this.allPlayers = allPlayers
-        this.socket = new SockJS('http://localhost:8080/registersocket')//http://192.168.1.36:8080/registersocket
+        this.socket = new SockJS('http://192.168.1.36:8080/registersocket')//http://192.168.1.36:8080/registersocket
         this.stompClient = Stomp.over(this.socket)
         this._controller = new Controller(actingPlayer, this)
         //@ts-ignore

@@ -47,7 +47,7 @@ export let nickname = ''
 
 const runProgram = async (gl: WebGLRenderingContext) => {
     //api instance
-    const api = Axios.create({ baseURL: 'http://localhost:8080/', withCredentials: true })//http://192.168.1.36:8080/
+    const api = Axios.create({ baseURL: 'http://192.168.1.36:8080/', withCredentials: true })//http://192.168.1.36:8080/
 
     gl.viewport(0,0,gl.canvas.width,gl.canvas.height)
 
@@ -61,6 +61,7 @@ const runProgram = async (gl: WebGLRenderingContext) => {
     const aLocations = configAndGetAttribLocations(gl, shaderProgram)
     const uLocations = configAndGetUniformLocations(gl, shaderProgram)
 
+    // nickname = 'rebel'
     nickname = prompt('Enter nickname:')!
 
     const userRegistered = await api.post('/login', { username: nickname })

@@ -11,13 +11,21 @@ export const createTankTop = (size: number): TModelProps => {
             -0.4,  0.2,
              0.4,  0.2,
             -0.4, -0.4,
-             0.4, -0.4
+             0.4, -0.4,
+
+            -0.05, 0.9, //6
+             0.05, 0.9, //7
+             0.05, 0,   //8
+            -0.05, 0    //9
         ]),
         index: new Int8Array([
             0, 1, 3,
             0, 2, 3,
             2, 4, 5,
-            2, 3, 5
+            2, 3, 5,
+
+            6, 7, 8,
+            6, 8, 9
         ])
     }
     return props
@@ -33,6 +41,7 @@ export class TankTop extends Model {
     private readonly matrices: TMatrixBundle
 
     private _rotateAngle: number
+    private readonly vertexCount: number
 
     constructor(gl: WebGLRenderingContext, aLocations: TAttributeLocations, uLocations: TUniformLocations, matrices: TMatrixBundle) {
         super();
@@ -45,6 +54,7 @@ export class TankTop extends Model {
         this.matrices = matrices
 
         const tankTop = createTankTop(1.0)
+        this.vertexCount = tankTop.index ? tankTop.index.length : 0
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer)
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, tankTop.index!, gl.STATIC_DRAW) //always exists for top
@@ -67,7 +77,7 @@ export class TankTop extends Model {
         gl.vertexAttribPointer(this.aLocations['aPos'], 2, this.gl.FLOAT, false, 0, 0)
         gl.enableVertexAttribArray(this.aLocations['aPos'])
         gl.uniform4fv(this.uLocations['u_Color'], new Vector4(0.2, 0.4, 1.0, 1.0))
-        this.gl.drawElements(this.gl.TRIANGLES, 12, this.gl.UNSIGNED_BYTE, 0)
+        this.gl.drawElements(this.gl.TRIANGLES, this.vertexCount, this.gl.UNSIGNED_BYTE, 0)
 
         gl.uniformMatrix4fv(this.uLocations['model'], false, this.matrices.model!)
     }

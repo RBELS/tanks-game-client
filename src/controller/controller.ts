@@ -58,8 +58,8 @@ class Controller {
     }
 
     private updateMousePos(ev: MouseEvent) {
-        this.mousePos[0] = ev.x
-        this.mousePos[1] = ev.y
+        this.mousePos[0] = ev.x*2
+        this.mousePos[1] = ev.y*2
     }
 
     public getTopAngle() {
