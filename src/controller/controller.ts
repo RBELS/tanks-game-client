@@ -2,6 +2,7 @@ import {Player} from './player'
 import WebsocketConnection, {latency} from './api/api'
 import {canvas} from '../index'
 import {toDegrees, Vector2, Vector3} from '@math.gl/core'
+import {GameMap} from '../models/gamemap'
 
 class Controller {
     private static readonly ROTATE_SPEED = 80 // DEG/SEC
@@ -16,9 +17,9 @@ class Controller {
 
     private _lastUpdated?: number
 
-    constructor(player: Player, connection: WebsocketConnection) {
+    constructor(gamemap: GameMap, connection: WebsocketConnection) {
         this.keySet = new Set<string>()
-        this.player = player
+        this.player = gamemap.actingPlayer
         this.connection = connection
         this.mousePos = [0, 0]
         this.prepareController()
@@ -37,8 +38,8 @@ class Controller {
         document.onkeydown = (ev) => this.registerKeys(ev)
         document.onkeyup = (ev) => this.unregisterKeys(ev)
         canvas.onmousemove = (ev) => this.updateMousePos(ev) // This canvas object is global
+        canvas.onmousedown = () => this.connection.sendShoot()
         setInterval(() => {
-            // console.log(this.getTopAngle())
             this.connection.sendPlayerTopAngle(this.getTopAngle())
         }, 30)
     }

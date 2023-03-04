@@ -1,4 +1,4 @@
-export type PlayerState = {
+export type TPlayerState = {
     pos: number[]
     bodyAngle: number
     bodyRotateMultiplier: number
@@ -7,8 +7,14 @@ export type PlayerState = {
     topRotateMultiplier: number
 }
 
-export type GameState = {
+export type TBulletState = {
+    pos: number[]
+    rotateAngle: number
+}
+
+export type TGameState = {
     serverTime: number
-    players: {[key: string]: PlayerState}
+    players: {[key: string]: TPlayerState}
+    bullets: TBulletState[]
 }
 

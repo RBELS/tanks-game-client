@@ -3,7 +3,8 @@ import {CompatClient, Stomp} from '@stomp/stompjs'
 import Controller from '../controller'
 import {Player} from '../player'
 import {Vector2} from '@math.gl/core'
-import {GameState, PlayerState} from './api-types'
+import {TGameState, TPlayerState} from './api-types'
+import {GameMap} from '../../models/gamemap'
 
 
 const interceptEvent = (target: Window | Document, eventName: string, newHandler: (ev: Event) => void) => {
@@ -19,32 +20,31 @@ const interceptEvent = (target: Window | Document, eventName: string, newHandler
 export let latency = 0
 
 class WebsocketConnection {
-    private socket: WebSocket
+    private readonly socket: WebSocket
     private stompClient: CompatClient
 
-    private _controller: Controller
+    private readonly _controller: Controller
+    private readonly gameMap: GameMap
     private actingPlayer: Player
-    private allPlayers: Map<string, Player>
+    private _allPlayers: Map<string, Player>
 
-    constructor(actingPlayer: Player, allPlayers: Map<string, Player>) {
-        this.actingPlayer = actingPlayer;
-        this.allPlayers = allPlayers
+    constructor(gameMap: GameMap) {
+        this.gameMap = gameMap
+        this.actingPlayer = gameMap.actingPlayer;
+        this._allPlayers = gameMap.players
         this.socket = new SockJS('http://192.168.1.36:8080/registersocket')//http://192.168.1.36:8080/registersocket
         this.stompClient = Stomp.over(this.socket)
-        this._controller = new Controller(actingPlayer, this)
+        this._controller = new Controller(gameMap, this)
         //@ts-ignore
         this.stompClient.debug = () => {}
 
         this.stompClient.connect({}, () => {
             this.stompClient.subscribe('/topic/gamestate', (newstate) => {
                 if (!this._controller) return
-                const stateObj: GameState = JSON.parse(newstate.body)
-
-                // latency = 14.6
-
+                const stateObj: TGameState = JSON.parse(newstate.body)
+                this.gameMap.bullets = stateObj.bullets
                 for (const somePlayerNickname in stateObj.players) {
-                    console.log(stateObj.players[somePlayerNickname])
-                    let somePlayer = this.allPlayers.get(somePlayerNickname)
+                    let somePlayer = this._allPlayers.get(somePlayerNickname)
                     const somePlayerState = stateObj.players[somePlayerNickname]
                     if (!somePlayer) {
                         somePlayer = new Player(
@@ -56,7 +56,7 @@ class WebsocketConnection {
                             somePlayerNickname,
                             this.actingPlayer.matrices
                         )
-                        this.allPlayers.set(somePlayerNickname, somePlayer)
+                        this._allPlayers.set(somePlayerNickname, somePlayer)
                     }
                     somePlayer.pos = new Vector2(somePlayerState.pos[0], somePlayerState.pos[1])
                     somePlayer.moveMultiplier = somePlayerState.moveMultiplier
@@ -82,6 +82,13 @@ class WebsocketConnection {
         this.stompClient.send('/app/updateTopAngle', {}, JSON.stringify({
             name: this.actingPlayer.nickname,
             topAngle
+        }))
+    }
+
+    public sendShoot() {
+        this.stompClient.send('/app/action', {}, JSON.stringify({
+            name: this.actingPlayer.nickname,
+            action: 1
         }))
     }
 
