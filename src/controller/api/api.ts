@@ -32,7 +32,7 @@ class WebsocketConnection {
         this.gameMap = gameMap
         this.actingPlayer = gameMap.actingPlayer;
         this._allPlayers = gameMap.players
-        this.socket = new SockJS('http://192.168.1.36:8080/registersocket')//http://192.168.1.36:8080/registersocket
+        this.socket = new SockJS('http://localhost:8080/registersocket')//http://192.168.1.36:8080/registersocket
         this.stompClient = Stomp.over(this.socket)
         this._controller = new Controller(gameMap, this)
         //@ts-ignore
@@ -42,7 +42,9 @@ class WebsocketConnection {
             this.stompClient.subscribe('/topic/gamestate', (newstate) => {
                 if (!this._controller) return
                 const stateObj: TGameState = JSON.parse(newstate.body)
-                this.gameMap.bullets = stateObj.bullets
+                // this.gameMap.bullets = stateObj.bullets
+                this.gameMap.bullets.splice(0, this.gameMap.bullets.length)
+                this.gameMap.bullets.push(...stateObj.bullets)
                 for (const somePlayerNickname in stateObj.players) {
                     let somePlayer = this._allPlayers.get(somePlayerNickname)
                     const somePlayerState = stateObj.players[somePlayerNickname]

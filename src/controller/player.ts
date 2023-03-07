@@ -8,7 +8,7 @@ import {TankTop} from '../models/tank/tank-top'
 
 
 export class Player extends Model{
-    public static readonly UP_VEC = new Vector3(0.0, 1.0, 0.0)
+    public static readonly UP_VEC_3D = new Vector3(0.0, 1.0, 0.0)
 
     private _pos: Vector2
     private _bodyAngle?: number //made null because both value are used in setter
@@ -78,9 +78,9 @@ export class Player extends Model{
 
         if (this.isMainPlayer) {
             const viewMatrix = new Matrix4().lookAt({
-                eye: new Vector3(this._pos.x, this._pos.y, 10.0),
+                eye: new Vector3(this._pos.x, this._pos.y, 20.0),
                 center: new Vector3(this._pos.x, this._pos.y, 0),
-                up: Player.UP_VEC
+                up: Player.UP_VEC_3D
             })
             this._matrices.view = viewMatrix
             _gl.uniformMatrix4fv(this._uLocations['view'], false, viewMatrix)
@@ -111,7 +111,7 @@ export class Player extends Model{
     }
 
     private updateBodyDirVec(): Vector2 {
-        const bufVec3 = new Vector3().copy(Player.UP_VEC)
+        const bufVec3 = new Vector3().copy(Player.UP_VEC_3D)
         bufVec3.rotateZ({
             radians: radians(this._bodyAngle!) //must not be null
         })

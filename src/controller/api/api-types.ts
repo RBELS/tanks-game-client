@@ -1,3 +1,5 @@
+import {Vector2, Vector3} from "@math.gl/core";
+
 export type TPlayerState = {
     pos: number[]
     bodyAngle: number
@@ -10,6 +12,7 @@ export type TPlayerState = {
 export type TBulletState = {
     pos: number[]
     rotateAngle: number
+    dir?: Vector3
 }
 
 export type TGameState = {

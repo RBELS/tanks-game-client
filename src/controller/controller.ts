@@ -1,8 +1,9 @@
 import {Player} from './player'
 import WebsocketConnection, {latency} from './api/api'
 import {canvas} from '../index'
-import {toDegrees, Vector2, Vector3} from '@math.gl/core'
+import {toDegrees, toRadians, Vector2, Vector3} from '@math.gl/core'
 import {GameMap} from '../models/gamemap'
+import {TBulletState} from "./api/api-types";
 
 class Controller {
     private static readonly ROTATE_SPEED = 80 // DEG/SEC
@@ -12,6 +13,7 @@ class Controller {
 
     private keySet: Set<string>
     private player: Player
+    private readonly bullets: TBulletState[]
     private connection: WebsocketConnection
     private readonly mousePos: number[]
 
@@ -22,6 +24,7 @@ class Controller {
         this.player = gamemap.actingPlayer
         this.connection = connection
         this.mousePos = [0, 0]
+        this.bullets = gamemap.bullets
         this.prepareController()
     }
 
@@ -68,7 +71,7 @@ class Controller {
         const mousePoint = new Vector3(this.mousePos[0], canvas.height-this.mousePos[1], 0)
         const dirVector = new Vector3().subVectors(mousePoint, centerPoint).normalize()
 
-        let angle = Math.acos(dirVector.dot(Player.UP_VEC))
+        let angle = Math.acos(dirVector.dot(Player.UP_VEC_3D))
         if (dirVector.x >= 0)
             angle = 2*Math.PI - angle
 
@@ -79,14 +82,23 @@ class Controller {
         if (this._lastUpdated == undefined) this._lastUpdated = Date.now()
 
         const currentTime = Date.now() + latency
-        const deltaTime = currentTime - this._lastUpdated
+        const deltaTime = (currentTime - this._lastUpdated) / 1000
         this._lastUpdated = currentTime
 
-        const moveDistance = deltaTime*Controller.MOVEMENT_SPEED/1000
+        const moveDistance = deltaTime*Controller.MOVEMENT_SPEED
         this.player.move(moveDistance)
 
-        this.player.rotateBody(deltaTime*Controller.ROTATE_SPEED/1000)
-        this.player.rotateTop(deltaTime*Controller.TOP_ROTATE_SPEED/1000)
+        this.player.rotateBody(deltaTime*Controller.ROTATE_SPEED)
+        this.player.rotateTop(deltaTime*Controller.TOP_ROTATE_SPEED)
+
+        this.bullets.forEach(bullet => {
+            if (!bullet.dir) {
+                bullet.dir = new Vector3().rotateZ({ radians: toRadians(bullet.rotateAngle), origin: Player.UP_VEC_3D })
+            }
+
+            const posVec = new Vector3(bullet.pos[0], bullet.pos[1], 0).add(bullet.dir.multiplyByScalar(deltaTime))
+            bullet.pos = [posVec.x, posVec.y]
+        })
     }
 }
 

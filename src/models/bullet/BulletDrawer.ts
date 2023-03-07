@@ -53,7 +53,7 @@ export class BulletDrawer {
         const {gl} = this
         let modelMatrix = new Matrix4(Matrix4.IDENTITY)
         modelMatrix = modelMatrix.translate(new Vector4(bullet.pos[0], bullet.pos[1], 0, 0))
-        modelMatrix = modelMatrix.rotateZ(bullet.rotateAngle)
+        modelMatrix = modelMatrix.rotateZ(toRadians(bullet.rotateAngle))
 
         gl.uniformMatrix4fv(this.uLocations['model'], false, modelMatrix)
 

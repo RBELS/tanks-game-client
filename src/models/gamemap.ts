@@ -30,7 +30,7 @@ export class GameMap extends Model {
     private background: Background
 
     private readonly _players: Map<string, Player>
-    private _bullets: TBulletState[]
+    private readonly _bullets: TBulletState[]
     private bulletDrawer: BulletDrawer
 
     constructor(gl: WebGLRenderingContext, actingPlayerNickname: string, uLocations: TUniformLocations, aLocations: TAttributeLocations) {
@@ -83,9 +83,5 @@ export class GameMap extends Model {
 
     get bullets(): TBulletState[] {
         return this._bullets
-    }
-
-    set bullets(value: TBulletState[]) {
-        this._bullets = value
     }
 }
