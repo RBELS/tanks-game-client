@@ -87,12 +87,13 @@ class WebsocketConnection {
         }))
     }
 
-    public sendShoot() {
+    public sendClick(on: boolean) {
         this.stompClient.send('/app/action', {}, JSON.stringify({
             name: this.actingPlayer.nickname,
-            action: 1
+            action: on ? 1 : -1
         }))
     }
+
 
     public updateWithPredictions(): void {
         this._controller.update()

@@ -41,7 +41,8 @@ class Controller {
         document.onkeydown = (ev) => this.registerKeys(ev)
         document.onkeyup = (ev) => this.unregisterKeys(ev)
         canvas.onmousemove = (ev) => this.updateMousePos(ev) // This canvas object is global
-        canvas.onmousedown = () => this.connection.sendShoot()
+        canvas.onmousedown = (ev) => this.registerClick(ev)
+        canvas.onmouseup = (ev) => this.unregisterClick(ev)
         setInterval(() => {
             this.connection.sendPlayerTopAngle(this.getTopAngle())
         }, 30)
@@ -64,6 +65,14 @@ class Controller {
     private updateMousePos(ev: MouseEvent) {
         this.mousePos[0] = ev.x*2
         this.mousePos[1] = ev.y*2
+    }
+
+    private registerClick(ev: MouseEvent) {
+        this.connection.sendClick(true)
+    }
+
+    private unregisterClick(ev: MouseEvent) {
+        this.connection.sendClick(false)
     }
 
     public getTopAngle() {
