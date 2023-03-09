@@ -40,9 +40,9 @@ class Controller {
         console.log('window onload assigned')
         document.onkeydown = (ev) => this.registerKeys(ev)
         document.onkeyup = (ev) => this.unregisterKeys(ev)
-        canvas.onmousemove = (ev) => this.updateMousePos(ev) // This canvas object is global
-        canvas.onmousedown = (ev) => this.registerClick(ev)
-        canvas.onmouseup = (ev) => this.unregisterClick(ev)
+        document.onmousemove = (ev) => this.updateMousePos(ev) // This canvas object is global
+        document.onmousedown = (ev) => this.registerClick(ev)
+        document.onmouseup = (ev) => this.unregisterClick(ev)
         setInterval(() => {
             this.connection.sendPlayerTopAngle(this.getTopAngle())
         }, 30)
