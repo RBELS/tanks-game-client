@@ -21,3 +21,7 @@ export type TGameState = {
     bullets: TBulletState[]
 }
 
+export type TScoreBoardEl = {
+    name: string
+    score: number
+}

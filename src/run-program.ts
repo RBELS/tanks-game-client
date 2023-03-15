@@ -7,6 +7,7 @@ import {TAttributeLocations, TUniformLocations} from './models/types'
 import Axios from 'axios'
 import {GameMap} from './models/gamemap'
 import {Vector2} from '@math.gl/core'
+import {restapi, Restapi} from "./controller/api/restapi";
 
 const compileShaderShortcut = (gl: WebGLRenderingContext, shaderSource: string, shaderType: number): WebGLShader => {
     const shader = gl.createShader(shaderType)!
@@ -46,8 +47,6 @@ export let nickname = ''
 
 
 const runProgram = async (gl: WebGLRenderingContext) => {
-    //api instance
-    const api = Axios.create({ baseURL: 'http://localhost:8080/', withCredentials: true })//http://192.168.1.36:8080/
 
     gl.viewport(0,0,gl.canvas.width,gl.canvas.height)
 
@@ -61,12 +60,10 @@ const runProgram = async (gl: WebGLRenderingContext) => {
     const aLocations = configAndGetAttribLocations(gl, shaderProgram)
     const uLocations = configAndGetUniformLocations(gl, shaderProgram)
 
-    // nickname = 'rebel'
     nickname = prompt('Enter nickname:')!
+    await restapi.login(nickname)
 
-    const userRegistered = await api.post('/login', { username: nickname })
     const gameMap = new GameMap(gl, nickname, uLocations, aLocations)
-
 
     const draw = (timestamp: number) => {
         gl.clearColor(98/255, 114/255, 164/255, 1)

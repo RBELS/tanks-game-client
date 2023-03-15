@@ -5,6 +5,7 @@ import {Player} from '../player'
 import {Vector2} from '@math.gl/core'
 import {TGameState, TPlayerState} from './api-types'
 import {GameMap} from '../../models/gamemap'
+import {updateScoreBoard} from "../domutils";
 
 
 const interceptEvent = (target: Window | Document, eventName: string, newHandler: (ev: Event) => void) => {
@@ -33,8 +34,8 @@ class WebsocketConnection {
         this.actingPlayer = gameMap.actingPlayer;
         this._allPlayers = gameMap.players
         this.socket = new SockJS('http://localhost:8080/registersocket')//http://192.168.1.36:8080/registersocket
-        this.stompClient = Stomp.over(this.socket)
         this._controller = new Controller(gameMap, this)
+        this.stompClient = Stomp.over(this.socket)
         //@ts-ignore
         this.stompClient.debug = () => {}
 
@@ -69,6 +70,11 @@ class WebsocketConnection {
                 }
                 this._controller.lastUpdated = Date.now()
             })
+            updateScoreBoard()
+            this.stompClient.subscribe('/topic/doUpdate', (updateSignal) => {
+                console.log(updateSignal.body)
+                updateScoreBoard()
+            })
         })
     }
 
@@ -93,7 +99,6 @@ class WebsocketConnection {
             action: on ? 1 : -1
         }))
     }
-
 
     public updateWithPredictions(): void {
         this._controller.update()
