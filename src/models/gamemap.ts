@@ -7,6 +7,8 @@ import {Model} from './Model'
 import {createSquare} from './square'
 import {TBulletState} from '../controller/api/api-types'
 import {BulletDrawer} from './bullet/BulletDrawer'
+import {HPBarDrawer} from "./hpbar/HPBarDrawer";
+import {hpBarDrawer} from "../run-program";
 
 /**
  * Generates map of provided size.
@@ -49,14 +51,14 @@ export class GameMap extends Model {
 
         this._actingPlayer.setMatrices()
         this.background = new Background(gl, uLocations, aLocations, this._actingPlayer)
-
+        hpBarDrawer.matrices = this._actingPlayer.matrices
     }
 
 
     public draw() {
         this.background.setMatrices()
         this.background.draw()
-        console.log(this.bullets)
+
         for (const player of this._players.values()) {
             player.setMatrices()
             player.draw()

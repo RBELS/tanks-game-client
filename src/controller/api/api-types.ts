@@ -7,6 +7,8 @@ export type TPlayerState = {
     moveMultiplier: number
     topRotateAngle: number
     topRotateMultiplier: number
+    hp: number
+    maxHp: number
 }
 
 export type TBulletState = {
@@ -24,4 +26,13 @@ export type TGameState = {
 export type TScoreBoardEl = {
     name: string
     score: number
+}
+
+export type TInverseMessage = {
+    type: string
+}
+
+export const SERVER_SIGNAL = {
+    UPDATE_SCOREBOARD: 'UPDATE_SCOREBOARD' as const,
+    UPDATE_HP: 'UPDATE_HP' as const,
 }

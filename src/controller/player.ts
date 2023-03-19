@@ -1,9 +1,9 @@
 import {TAttributeLocations, TMatrixBundle, TUniformLocations} from '../models/types'
 import {Matrix4, radians, Vector2, Vector3, Vector4} from '@math.gl/core'
 import {Model} from '../models/Model';
-import {TankBody} from '../models/tank/tank-body';
-import Vector from '@math.gl/core/dist/classes/base/vector'
+import {TankBody} from '../models/tank/tank-body'
 import {TankTop} from '../models/tank/tank-top'
+import {hpBarDrawer} from '../run-program'
 
 
 
@@ -27,6 +27,8 @@ export class Player extends Model{
     private tankBody: TankBody
     private tankTop: TankTop
     private _matrices: TMatrixBundle
+    private _hp: number
+    private _maxHp: number
 
     private readonly isMainPlayer: boolean
 
@@ -61,6 +63,8 @@ export class Player extends Model{
 
         this._tankTopAngle = 0
         this._tankTopRotateMultiplier = 0
+        this._hp = 0
+        this._maxHp = 0
     }
 
 
@@ -136,6 +140,7 @@ export class Player extends Model{
     draw(): void {
         this.tankBody.draw()
         this.tankTop.draw()
+        hpBarDrawer.drawBar(this._pos, this._hp / this._maxHp)
     }
 
     public move(distance: number) {
@@ -219,6 +224,24 @@ export class Player extends Model{
 
     set tankTopRotateMultiplier(value: number) {
         this._tankTopRotateMultiplier = value
+    }
+
+
+    get hp(): number {
+        return this._hp;
+    }
+
+    set hp(value: number) {
+        this._hp = value;
+    }
+
+
+    get maxHp(): number {
+        return this._maxHp;
+    }
+
+    set maxHp(value: number) {
+        this._maxHp = value;
     }
 }
 

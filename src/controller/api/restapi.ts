@@ -1,5 +1,6 @@
 import Axios, {AxiosInstance} from 'axios'
 import {TScoreBoardEl} from "./api-types";
+import {config} from "../../config";
 
 export class Restapi {
     private instance: AxiosInstance
@@ -16,4 +17,4 @@ export class Restapi {
     }
 }
 
-export const restapi = new Restapi('http://localhost:8080/')
+export const restapi = new Restapi(`${config.serverAddress}:8080/`)

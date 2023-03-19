@@ -8,6 +8,7 @@ import Axios from 'axios'
 import {GameMap} from './models/gamemap'
 import {Vector2} from '@math.gl/core'
 import {restapi, Restapi} from "./controller/api/restapi";
+import {HPBarDrawer} from "./models/hpbar/HPBarDrawer";
 
 const compileShaderShortcut = (gl: WebGLRenderingContext, shaderSource: string, shaderType: number): WebGLShader => {
     const shader = gl.createShader(shaderType)!
@@ -39,12 +40,17 @@ const configAndGetUniformLocations = (gl: WebGLRenderingContext, shaderProgram: 
         u_Color: gl.getUniformLocation(shaderProgram, 'u_Color')!,
         playerPos: gl.getUniformLocation(shaderProgram, 'playerPos')!,
         drawMesh: gl.getUniformLocation(shaderProgram, 'drawMesh')!,
+        drawType: gl.getUniformLocation(shaderProgram, 'drawType')!,
+        hpPerc: gl.getUniformLocation(shaderProgram, 'hpPerc')!
     }
 }
 
 
 export let nickname = ''
 
+// export let aLocations: TAttributeLocations
+// export let uLocations: TUniformLocations
+export let hpBarDrawer: HPBarDrawer
 
 const runProgram = async (gl: WebGLRenderingContext) => {
 
@@ -59,6 +65,7 @@ const runProgram = async (gl: WebGLRenderingContext) => {
 
     const aLocations = configAndGetAttribLocations(gl, shaderProgram)
     const uLocations = configAndGetUniformLocations(gl, shaderProgram)
+    hpBarDrawer = new HPBarDrawer(gl, uLocations, aLocations)
 
     nickname = prompt('Enter nickname:')!
     await restapi.login(nickname)
