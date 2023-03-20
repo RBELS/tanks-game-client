@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
     mode: 'development',
     entry: {
-        mainPage: './src/index.ts'
+        mainPage: './src/react-index.tsx'
     },
     output: {
         filename: '[name].[contenthash].bundle.js',
@@ -17,10 +17,10 @@ module.exports = {
             template: './src/index.html',
             chunks: ['mainPage'],
             inject: 'body'
-        })
+        }),
     ],
     resolve: {
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.js', '.tsx', '.jsx']
     },
     module: {
         rules: [
