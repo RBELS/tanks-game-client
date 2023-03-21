@@ -1,7 +1,7 @@
 import {restapi} from "./api/restapi";
 import {TScoreBoardEl} from "./api/api-types";
+import {scoreBoardEl} from '../index'
 
-export const scoreBoardEl = document.getElementById('score-table')!
 
 export const updateScoreBoard = async () => {
     let resultInnerHTML = ''
