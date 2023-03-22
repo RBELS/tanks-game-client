@@ -8,6 +8,7 @@ import {GameMap} from '../../models/gamemap'
 import {updateScoreBoard} from "../domutils";
 import {config} from "../../config";
 import {HPBarDrawer} from "../../models/hpbar/HPBarDrawer";
+import {restapi} from './restapi'
 
 
 const interceptEvent = (target: Window | Document, eventName: string, newHandler: (ev: Event) => void) => {
@@ -43,7 +44,7 @@ class WebsocketConnection {
         this.stompClient.debug = () => {}
 
         this.stompClient.connect({}, () => {
-            this.stompClient.subscribe('/topic/gamestate', (newstate) => {
+            this.stompClient.subscribe(`/topic/gamestate/${restapi.lobbyId}`, (newstate) => {
                 if (!this._controller) return
                 const stateObj: TGameState = JSON.parse(newstate.body)
                 // this.gameMap.bullets = stateObj.bullets
@@ -76,7 +77,7 @@ class WebsocketConnection {
                 this._controller.lastUpdated = Date.now()
             })
             updateScoreBoard()
-            this.stompClient.subscribe('/topic/doUpdate', (data) => {
+            this.stompClient.subscribe(`/topic/doUpdate/${restapi.lobbyId}`, (data) => {
                 const recMessage: TInverseMessage = JSON.parse(data.body)
                 switch (recMessage.type) {
                     case SERVER_SIGNAL.UPDATE_SCOREBOARD: {
@@ -95,21 +96,24 @@ class WebsocketConnection {
         const keyArr = Array.from(keySet.keys())
         this.stompClient.send('/app/updatePos', {}, JSON.stringify({
             name: this.actingPlayer.nickname,
-            input: keyArr
+            input: keyArr,
+            lobbyId: restapi.lobbyId
         }))
     }
 
     public sendPlayerTopAngle(topAngle: number) {
         this.stompClient.send('/app/updateTopAngle', {}, JSON.stringify({
             name: this.actingPlayer.nickname,
-            topAngle
+            topAngle,
+            lobbyId: restapi.lobbyId
         }))
     }
 
     public sendClick(on: boolean) {
         this.stompClient.send('/app/action', {}, JSON.stringify({
             name: this.actingPlayer.nickname,
-            action: on ? 1 : -1
+            action: on ? 1 : -1,
+            lobbyId: restapi.lobbyId
         }))
     }
 

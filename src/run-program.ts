@@ -67,6 +67,8 @@ const runProgram = async (gl: WebGLRenderingContext) => {
     const uLocations = configAndGetUniformLocations(gl, shaderProgram)
     hpBarDrawer = new HPBarDrawer(gl, uLocations, aLocations)
 
+    await restapi.createLobby()
+
     nickname = prompt('Enter nickname:')!
     await restapi.login(nickname)
 
