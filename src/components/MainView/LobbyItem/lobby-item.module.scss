@@ -1,0 +1,61 @@
+.lobbyItemContainer {
+    font-family: Roboto, 'sans-serif';
+    color: #50fa7b;
+    width: calc(100% - 20px);
+    height: 100px;
+    min-height: 100px;
+    background-color: #282a36;
+    margin: 10px 0 0 0;
+    overflow: hidden;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    scale: 1.0;
+    transition: all ease-out 0.4s 0s;
+
+    &:hover {
+        scale: 1.03;
+        transition: all ease-out 0.2s 0s;
+        //color: #8be9fd;
+        color: #ff5555;
+    }
+
+    .lobbyNameContainer {
+        font-weight: 700;
+        font-size: 1.5em;
+
+    }
+
+    .lobbyInfoContainer {
+        display: flex;
+        flex-direction: column;
+        background-color: rebeccapurple;
+        border-radius: 5px;
+
+        .leaderTyping, .playersInfo {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .leaderTyping {
+        }
+
+        .playersInfo {
+
+        }
+    }
+}
+
+.defaultText {
+    font-weight: 600;
+}
+
+.insertText {
+    font-style: italic;
+    margin-left: 40px;
+}

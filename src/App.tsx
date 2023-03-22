@@ -1,18 +1,22 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 import './index'
+import MainView from './components/MainView/main-view'
+import GameView from './components/GameView/game-view'
 import {startApp} from './index'
-import styles from './app.module.scss'
 
 const App: React.FC = () => {
+    const [appStarted, setAppStarted] = useState(false)
+    const [gameStarted, setGameStarted] = useState(false)
+
     useEffect(() => {
-        startApp()
-    }, [])
+        if (gameStarted && !appStarted) {
+            startApp()
+            setAppStarted(true)
+        }
+    }, [gameStarted])
+
     return <>
-        <canvas width={1400} height={700} id={'canvas_main'}></canvas>
-        <div className={`score-table-container`}>
-            <h2 className={'score-table-heading'}>Scoreboard</h2>
-            <ul className={'score-table'} id={'score-table'}></ul>
-        </div>
+        {gameStarted ? <GameView /> : <MainView startGame={() => setGameStarted(true)} />}
     </>
 }
 

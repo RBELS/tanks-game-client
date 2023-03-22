@@ -7,7 +7,7 @@ export let scoreBoardEl: HTMLUListElement
 let gl: WebGLRenderingContext
 
 export const startApp = () => {
-    canvas = document.getElementById('canvas_main') as HTMLCanvasElement
+    canvas = document.getElementById('canvas-main') as HTMLCanvasElement
     scoreBoardEl = document.getElementById('score-table') as HTMLUListElement
     gl = canvas.getContext('webgl')!
     if (gl) {
