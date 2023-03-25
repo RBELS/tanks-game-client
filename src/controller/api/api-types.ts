@@ -36,3 +36,10 @@ export const SERVER_SIGNAL = {
     UPDATE_SCOREBOARD: 'UPDATE_SCOREBOARD' as const,
     UPDATE_HP: 'UPDATE_HP' as const,
 }
+
+export type TUserLobby = {
+    lobbyId: string
+    leader: string
+    lobbyName: string
+    playersCount: number
+}

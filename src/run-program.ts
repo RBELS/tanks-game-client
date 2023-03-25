@@ -9,6 +9,7 @@ import {GameMap} from './models/gamemap'
 import {Vector2} from '@math.gl/core'
 import {restapi, Restapi} from "./controller/api/restapi";
 import {HPBarDrawer} from "./models/hpbar/HPBarDrawer";
+import {TConfig} from './index'
 
 const compileShaderShortcut = (gl: WebGLRenderingContext, shaderSource: string, shaderType: number): WebGLShader => {
     const shader = gl.createShader(shaderType)!
@@ -52,7 +53,7 @@ export let nickname = ''
 // export let uLocations: TUniformLocations
 export let hpBarDrawer: HPBarDrawer
 
-const runProgram = async (gl: WebGLRenderingContext) => {
+const runProgram = async (gl: WebGLRenderingContext, config: TConfig) => {
 
     gl.viewport(0,0,gl.canvas.width,gl.canvas.height)
 
@@ -67,10 +68,13 @@ const runProgram = async (gl: WebGLRenderingContext) => {
     const uLocations = configAndGetUniformLocations(gl, shaderProgram)
     hpBarDrawer = new HPBarDrawer(gl, uLocations, aLocations)
 
-    await restapi.createLobby()
-
-    nickname = prompt('Enter nickname:')!
-    await restapi.login(nickname)
+    // await restapi.createLobby()
+    if (config.inUsername) {
+        nickname = config.inUsername
+    } else {
+        nickname = prompt('Enter nickname:')!
+    }
+    await restapi.login(nickname, config.inLobbyId)
 
     const gameMap = new GameMap(gl, nickname, uLocations, aLocations)
 

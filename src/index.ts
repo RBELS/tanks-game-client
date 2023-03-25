@@ -6,7 +6,12 @@ export let canvas: HTMLCanvasElement
 export let scoreBoardEl: HTMLUListElement
 let gl: WebGLRenderingContext
 
-export const startApp = () => {
+export type TConfig = {
+    inLobbyId: string
+    inUsername?: string
+}
+
+export const startApp = (config: TConfig) => {
     canvas = document.getElementById('canvas-main') as HTMLCanvasElement
     scoreBoardEl = document.getElementById('score-table') as HTMLUListElement
     gl = canvas.getContext('webgl')!
@@ -16,7 +21,7 @@ export const startApp = () => {
 
         console.log(gl.canvas.width + '\t' + gl.canvas.height)
 
-        runProgram(gl)
+        runProgram(gl, config)
     }
 }
 

@@ -2,21 +2,21 @@ import React, {useEffect, useState} from 'react'
 import './index'
 import MainView from './components/MainView/main-view'
 import GameView from './components/GameView/game-view'
-import {startApp} from './index'
+import {startApp, TConfig} from './index'
 
 const App: React.FC = () => {
     const [appStarted, setAppStarted] = useState(false)
-    const [gameStarted, setGameStarted] = useState(false)
+    const [config, setConfig] = useState<TConfig>()
 
     useEffect(() => {
-        if (gameStarted && !appStarted) {
-            startApp()
+        if (config && !appStarted) {
+            startApp(config),
             setAppStarted(true)
         }
-    }, [gameStarted])
+    }, [config])
 
     return <>
-        {gameStarted ? <GameView /> : <MainView startGame={() => setGameStarted(true)} />}
+        {config ? <GameView /> : <MainView startGame={(config: TConfig) => {setConfig(config)}} />}
     </>
 }
 

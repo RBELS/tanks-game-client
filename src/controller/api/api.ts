@@ -5,21 +5,12 @@ import {Player} from '../player'
 import {Vector2} from '@math.gl/core'
 import {SERVER_SIGNAL, TGameState, TInverseMessage, TPlayerState} from './api-types'
 import {GameMap} from '../../models/gamemap'
-import {updateScoreBoard} from "../domutils";
+// import {updateScoreBoard} from "../domutils";
 import {config} from "../../config";
 import {HPBarDrawer} from "../../models/hpbar/HPBarDrawer";
 import {restapi} from './restapi'
+import {updateScoreBoard} from '../../components/GameView/score-table/score-table'
 
-
-const interceptEvent = (target: Window | Document, eventName: string, newHandler: (ev: Event) => void) => {
-    //@ts-ignore
-    const existingHandler = target[eventName]
-    // @ts-ignore
-    target[eventName] = function (ev) {
-        existingHandler(ev)
-        newHandler(ev)
-    }
-}
 
 export let latency = 0
 
