@@ -4,11 +4,11 @@ import {TUserLobby} from '../../../controller/api/api-types'
 import {startApp, TConfig} from '../../../index'
 
 type TLobbyItemProps = {
-    startGame: typeof startApp
+    startGame: (lobbyId: string) => void
 } & TUserLobby
 
 const LobbyItem: React.FC<TLobbyItemProps> = ({ startGame, lobbyId, playersCount, leader, lobbyName }) => {
-    return <div onClick={startGame.bind(null, { inLobbyId: lobbyId })} className={styles.lobbyItemContainer}>
+    return <div onClick={startGame.bind(null, lobbyId)} className={styles.lobbyItemContainer}>
         <div className={styles.lobbyNameContainer}>{lobbyName}</div>
 
         <div className={styles.lobbyInfoContainer}>

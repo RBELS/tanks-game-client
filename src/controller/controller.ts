@@ -10,6 +10,7 @@ class Controller {
     private static readonly TOP_ROTATE_SPEED = 160 // DEG/SEC
     public static MOVEMENT_SPEED = 6 // UNITS/SEC
     private static readonly ALLOWED_KEYSET = new Set<string>(['w', 's', 'a', 'd'])
+    private static readonly BULLET_V = 20.0
 
     private keySet: Set<string>
     private player: Player
@@ -102,10 +103,13 @@ class Controller {
 
         this.bullets.forEach(bullet => {
             if (!bullet.dir) {
-                bullet.dir = new Vector3().rotateZ({ radians: toRadians(bullet.rotateAngle), origin: Player.UP_VEC_3D })
+                // console.log(bullet.rotateAngle)
+                bullet.dir = new Vector3().copy(Player.UP_VEC_3D)
+                    .rotateZ({ radians: toRadians(bullet.rotateAngle) })
+                console.log(bullet.dir)
             }
-
-            const posVec = new Vector3(bullet.pos[0], bullet.pos[1], 0).add(bullet.dir.multiplyByScalar(deltaTime))
+            const posVec = new Vector3(bullet.pos[0], bullet.pos[1], 0)
+                .add(bullet.dir.multiplyByScalar(deltaTime*Controller.BULLET_V))
             bullet.pos = [posVec.x, posVec.y]
         })
     }

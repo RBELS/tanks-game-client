@@ -22,6 +22,7 @@ const MainView: React.FC<TMainViewProps> = ({ startGame }) => {
         console.log(JSON.stringify(userLobby))
     }
 
+    //need to add refresh button
     useEffect(() => {
         restapi.getLobbies().then(data => setAvailableLobbies(data))
         setInterval(() => {
@@ -40,7 +41,7 @@ const MainView: React.FC<TMainViewProps> = ({ startGame }) => {
             <aside className={styles.lobbiesViewContainer}>
                 <div className={styles.searchContainer}></div>
                 <div className={styles.lobbiesListContainer}>
-                    {availableLobbies?.map((el) => <LobbyItem startGame={startGame} {...el} key={el.lobbyId} />)}
+                    {availableLobbies?.map((el) => <LobbyItem startGame={(lobbyId: string) => startGame({inLobbyId: lobbyId, inUsername: username})} {...el} key={el.lobbyId} />)}
                 </div>
             </aside>
         </div>
