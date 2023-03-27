@@ -6,7 +6,6 @@ import {TUserLobby} from '../../controller/api/api-types'
 import {startApp, TConfig} from '../../index'
 
 type TMainViewProps = {
-    // startGame: (config: TConfig) => void
     startGame: typeof startApp
 }
 
@@ -33,10 +32,22 @@ const MainView: React.FC<TMainViewProps> = ({ startGame }) => {
     return <>
         <div className={styles.mainScreenContainer}>
             <main className={styles.mainScreenMain}>
-                <input value={username} placeholder={'username'} onChange={(e) => setUsername(e.target.value)} />
-                <input value={lobbyName} placeholder={'lobbyName'} onChange={(e) => setLobbyName(e.target.value)}/>
-                <button onClick={onCreateLobbyBtClick}>Create Lobby</button>
-                <br />
+                <div className={styles.dataContainer}>
+
+                    <div className={styles.usernameInputContainer}>
+                        <h2 className={styles.pageTextH2}>Enter a nickname for the player</h2>
+                        <input value={username} placeholder={'Username'} onChange={(e) => setUsername(e.target.value)} />
+                        <div className={styles.buttonLikeText}>...and simply select a lobby</div>
+                    </div>
+
+                    <hr className={styles.borderLine} />
+
+                    <div className={styles.createLobbyContainer}>
+                        <h2 className={styles.pageTextH2}>Create a new lobby</h2>
+                        <input value={lobbyName} placeholder={'Lobby Name'} onChange={(e) => setLobbyName(e.target.value)}/>
+                        <button onClick={onCreateLobbyBtClick}>Create Lobby</button>
+                    </div>
+                </div>
             </main>
             <aside className={styles.lobbiesViewContainer}>
                 <div className={styles.searchContainer}></div>

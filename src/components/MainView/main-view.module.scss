@@ -9,6 +9,75 @@
         height: inherit;
         width: 80%;
         background-color: #282a36;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .dataContainer {
+        .pageTextH2 {
+            color: #50fa7b;
+            font-family: Roboto, 'sans-serif';
+            font-style: italic;
+            user-select: none;
+        }
+
+        .usernameInputContainer {
+            display: flex;
+            flex-direction: column;
+            input {
+                background-color: transparent;
+                border: 1px dashed #6272a4;
+                padding: 10px;
+                font-size: 1.05em;
+                border-radius: 5px;
+                color: #50fa7b;
+                &::placeholder {
+                    color: rgba(98, 114, 164, 0.25);
+                }
+                margin-bottom: 20px;
+            }
+        }
+
+        .borderLine {
+            border: 1px dashed #44475a;
+            display: block;
+            margin: 20px 0px 0px;
+            //padding: 0px;
+        }
+
+        .createLobbyContainer {
+            display: flex;
+            flex-direction: column;
+            input {
+                background-color: transparent;
+                border: 1px dashed #6272a4;
+                padding: 10px;
+                font-size: 1.05em;
+                border-radius: 5px;
+                color: #50fa7b;
+                &::placeholder {
+                    color: rgba(98, 114, 164, 0.25);
+                }
+                margin-bottom: 20px;
+            }
+            button {
+                background-color: transparent;
+                color: #6272a4;
+                font-size: 1.05em;
+                padding: 10px;
+                border: 1px dashed #6272a4;
+                border-radius: 5px;
+                cursor: pointer;
+                &:hover {
+                    background-color: #50fa7b;
+                    color: #6272a4;
+                    transition: all ease-in 0.2s 0s;
+                }
+                transition: all ease-out 0.2s 0s;
+            }
+        }
     }
 
     .lobbiesViewContainer {
@@ -32,5 +101,16 @@
             overflow-y: scroll;
         }
     }
+}
+
+.buttonLikeText {
+    font-family: Roboto, 'sans-serif';
+    text-align: center;
+    color: #6272a4;
+    font-size: 1.05em;
+    padding: 10px;
+    border: 1px dashed #6272a4;
+    border-radius: 5px;
+    user-select: none;
 }
 
