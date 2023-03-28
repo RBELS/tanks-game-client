@@ -31,7 +31,7 @@ export class GameMap extends Model {
     private websocketConnection: WebsocketConnection
     private background: Background
 
-    private readonly _players: Map<string, Player>
+    private _players: Map<string, Player>
     private readonly _bullets: TBulletState[]
     private bulletDrawer: BulletDrawer
 
@@ -79,6 +79,10 @@ export class GameMap extends Model {
         return this._players
     }
 
+    set players(value: Map<string, Player>) {
+        this._players = value
+    }
+
     get actingPlayer(): Player {
         return this._actingPlayer
     }
@@ -86,4 +90,5 @@ export class GameMap extends Model {
     get bullets(): TBulletState[] {
         return this._bullets
     }
+
 }
