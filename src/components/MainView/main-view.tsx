@@ -3,7 +3,7 @@ import styles from './main-view.module.scss'
 import LobbyItem from './LobbyItem/lobby-item'
 import {restapi} from '../../controller/api/restapi'
 import {TUserLobby} from '../../controller/api/api-types'
-import {startApp, TConfig} from '../../index'
+import {startApp} from '../../index'
 
 type TMainViewProps = {
     startGame: typeof startApp
