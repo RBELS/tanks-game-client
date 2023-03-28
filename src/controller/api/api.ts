@@ -38,12 +38,11 @@ class WebsocketConnection {
             const url: string = this.socket._transport.url
             const urlPartArr = url.split('/')
             userConfig.playerId = urlPartArr[urlPartArr.length-2]
-            console.log(userConfig.playerId)
 
             this.stompClient.subscribe(`/topic/gamestate/${userConfig.lobbyId}`, (newstate) => {
                 if (!this._controller) return
                 const stateObj: TGameState = JSON.parse(newstate.body)
-                // this.gameMap.bullets = stateObj.bullets
+
                 this.gameMap.bullets.splice(0, this.gameMap.bullets.length)
                 this.gameMap.bullets.push(...stateObj.bullets)
                 for (const somePlayerNickname in stateObj.players) {
@@ -91,7 +90,8 @@ class WebsocketConnection {
     public sendPlayerPos(keySet: Set<string>) {
         const keyArr = Array.from(keySet.keys())
         this.stompClient.send('/app/updatePos', {}, JSON.stringify({
-            name: this.actingPlayer.nickname,
+            // name: this.actingPlayer.nickname,
+            playerId: userConfig.playerId,
             input: keyArr,
             lobbyId: userConfig.lobbyId
         }))
@@ -99,7 +99,8 @@ class WebsocketConnection {
 
     public sendPlayerTopAngle(topAngle: number) {
         this.stompClient.send('/app/updateTopAngle', {}, JSON.stringify({
-            name: this.actingPlayer.nickname,
+            // name: this.actingPlayer.nickname,
+            playerId: userConfig.playerId,
             topAngle,
             lobbyId: userConfig.lobbyId
         }))
@@ -107,7 +108,8 @@ class WebsocketConnection {
 
     public sendClick(on: boolean) {
         this.stompClient.send('/app/action', {}, JSON.stringify({
-            name: this.actingPlayer.nickname,
+            // name: this.actingPlayer.nickname,
+            playerId: userConfig.playerId,
             action: on ? 1 : -1,
             lobbyId: userConfig.lobbyId
         }))
