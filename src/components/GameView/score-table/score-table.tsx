@@ -6,20 +6,11 @@ import {userConfig} from '../../../index'
 
 export let updateScoreBoard: () => void
 
-
-// const createScoreTableItem = (el: TScoreBoardEl, index: number): string => {
-//     return `<li class="score-table-item">
-//         <span class="score-table-item-user">${index+1}. ${el.name}</span>
-//         <span class="score-table-item-points">${el.score}</span>
-//     </li>`
-// }
-
-
 const ScoreTable: React.FC = () => {
     const [scoreboardItems, setScoreboardItems] = useState<TScoreBoardEl[]>()
 
     updateScoreBoard = async () => {
-        const scoreBoard = await restapi.getScoreboard(userConfig.inLobbyId)
+        const scoreBoard = await restapi.getScoreboard(userConfig.lobbyId)
         setScoreboardItems(scoreBoard)
     }
 

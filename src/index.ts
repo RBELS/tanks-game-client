@@ -8,8 +8,9 @@ export let userConfig: TConfig
 let gl: WebGLRenderingContext
 
 export type TConfig = {
-    inLobbyId: string
-    inUsername?: string
+    lobbyId: string
+    username?: string
+    playerId?: string
 }
 
 export const startApp = (inConfig: TConfig) => {

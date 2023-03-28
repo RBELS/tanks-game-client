@@ -7,7 +7,6 @@ import {SERVER_SIGNAL, TGameState, TInverseMessage, TPlayerState} from './api-ty
 import {GameMap} from '../../models/gamemap'
 import {config} from "../../config";
 import {HPBarDrawer} from "../../models/hpbar/HPBarDrawer";
-import {restapi} from './restapi'
 import {updateScoreBoard} from '../../components/GameView/score-table/score-table'
 import {userConfig} from '../../index'
 
@@ -34,9 +33,14 @@ class WebsocketConnection {
         //@ts-ignore
         this.stompClient.debug = () => {}
 
-        this.stompClient.connect({ username: userConfig.inUsername, lobbyId: userConfig.inLobbyId }, () => {
-            console.log(this.stompClient.connectHeaders)
-            this.stompClient.subscribe(`/topic/gamestate/${userConfig.inLobbyId}`, (newstate) => {
+        this.stompClient.connect({ ...userConfig }, () => {
+            //@ts-ignore
+            const url: string = this.socket._transport.url
+            const urlPartArr = url.split('/')
+            userConfig.playerId = urlPartArr[urlPartArr.length-2]
+            console.log(userConfig.playerId)
+
+            this.stompClient.subscribe(`/topic/gamestate/${userConfig.lobbyId}`, (newstate) => {
                 if (!this._controller) return
                 const stateObj: TGameState = JSON.parse(newstate.body)
                 // this.gameMap.bullets = stateObj.bullets
@@ -69,7 +73,7 @@ class WebsocketConnection {
                 this._controller.lastUpdated = Date.now()
             })
             updateScoreBoard()
-            this.stompClient.subscribe(`/topic/doUpdate/${userConfig.inLobbyId}`, (data) => {
+            this.stompClient.subscribe(`/topic/doUpdate/${userConfig.lobbyId}`, (data) => {
                 const recMessage: TInverseMessage = JSON.parse(data.body)
                 switch (recMessage.type) {
                     case SERVER_SIGNAL.UPDATE_SCOREBOARD: {
@@ -89,7 +93,7 @@ class WebsocketConnection {
         this.stompClient.send('/app/updatePos', {}, JSON.stringify({
             name: this.actingPlayer.nickname,
             input: keyArr,
-            lobbyId: userConfig.inLobbyId
+            lobbyId: userConfig.lobbyId
         }))
     }
 
@@ -97,7 +101,7 @@ class WebsocketConnection {
         this.stompClient.send('/app/updateTopAngle', {}, JSON.stringify({
             name: this.actingPlayer.nickname,
             topAngle,
-            lobbyId: userConfig.inLobbyId
+            lobbyId: userConfig.lobbyId
         }))
     }
 
@@ -105,7 +109,7 @@ class WebsocketConnection {
         this.stompClient.send('/app/action', {}, JSON.stringify({
             name: this.actingPlayer.nickname,
             action: on ? 1 : -1,
-            lobbyId: userConfig.inLobbyId
+            lobbyId: userConfig.lobbyId
         }))
     }
 

@@ -17,7 +17,7 @@ const MainView: React.FC<TMainViewProps> = ({ startGame }) => {
 
     const onCreateLobbyBtClick: ReactEventHandler = async (ev) => {
         const userLobby = await restapi.createLobby(username, lobbyName)
-        startGame({inLobbyId: userLobby.lobbyId, inUsername: username})
+        startGame({lobbyId: userLobby.lobbyId, username: username})
         console.log(JSON.stringify(userLobby))
     }
 
@@ -52,7 +52,7 @@ const MainView: React.FC<TMainViewProps> = ({ startGame }) => {
             <aside className={styles.lobbiesViewContainer}>
                 <div className={styles.searchContainer}></div>
                 <div className={styles.lobbiesListContainer}>
-                    {availableLobbies?.map((el) => <LobbyItem startGame={(lobbyId: string) => startGame({inLobbyId: lobbyId, inUsername: username})} {...el} key={el.lobbyId} />)}
+                    {availableLobbies?.map((el) => <LobbyItem startGame={(lobbyId: string) => startGame({lobbyId: lobbyId, username: username})} {...el} key={el.lobbyId} />)}
                 </div>
             </aside>
         </div>

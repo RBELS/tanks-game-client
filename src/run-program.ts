@@ -69,8 +69,8 @@ const runProgram = async (gl: WebGLRenderingContext) => {
     hpBarDrawer = new HPBarDrawer(gl, uLocations, aLocations)
 
     // await restapi.createLobby()
-    if (userConfig.inUsername) {
-        nickname = userConfig.inUsername
+    if (userConfig.username) {
+        nickname = userConfig.username
     } else {
         nickname = prompt('Enter nickname:')!
     }
