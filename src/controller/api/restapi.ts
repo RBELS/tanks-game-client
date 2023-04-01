@@ -21,6 +21,10 @@ export class Restapi {
         return await this.instance.get(`/lobbies`).then(res => res.data)
     }
 
+    public async checkUsernameAllowed(lobbyId: string, username: string): Promise<boolean> {
+        return await this.instance.get(`/usernameExists/${lobbyId}/${username}`).then(res => res.data)
+    }
+
 }
 
 export const restapi = new Restapi(`${config.serverAddress}:8080/`)

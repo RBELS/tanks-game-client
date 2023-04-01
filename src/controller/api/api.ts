@@ -9,7 +9,6 @@ import {config} from "../../config";
 import {HPBarDrawer} from "../../models/hpbar/HPBarDrawer";
 import {updateScoreBoard} from '../../components/GameView/score-table/score-table'
 import {userConfig} from '../../index'
-import {types} from 'sass'
 
 
 export let latency = 0

@@ -21,23 +21,13 @@
             font-family: Roboto, 'sans-serif';
             font-style: italic;
             user-select: none;
+            -webkit-user-select: none;
+            cursor: default;
         }
 
         .usernameInputContainer {
             display: flex;
             flex-direction: column;
-            input {
-                background-color: transparent;
-                border: 1px dashed #6272a4;
-                padding: 10px;
-                font-size: 1.05em;
-                border-radius: 5px;
-                color: #50fa7b;
-                &::placeholder {
-                    color: rgba(98, 114, 164, 0.25);
-                }
-                margin-bottom: 20px;
-            }
         }
 
         .borderLine {
@@ -50,18 +40,6 @@
         .createLobbyContainer {
             display: flex;
             flex-direction: column;
-            input {
-                background-color: transparent;
-                border: 1px dashed #6272a4;
-                padding: 10px;
-                font-size: 1.05em;
-                border-radius: 5px;
-                color: #50fa7b;
-                &::placeholder {
-                    color: rgba(98, 114, 164, 0.25);
-                }
-                margin-bottom: 20px;
-            }
             button {
                 background-color: transparent;
                 color: #6272a4;
@@ -113,5 +91,39 @@
     border: 1px dashed #6272a4;
     border-radius: 5px;
     user-select: none;
+    -webkit-user-select: none;
+    cursor: default;
 }
 
+.defaultInput {
+    background-color: transparent;
+    border: 1px dashed #6272a4;
+    padding: 10px;
+    font-size: 1.05em;
+    border-radius: 5px;
+    color: #50fa7b;
+    &::placeholder {
+        color: rgba(98, 114, 164, 0.25);
+    }
+    margin-bottom: 20px;
+    &:focus {
+        border: 1px solid #50fa7b;
+    }
+}
+
+.errorInput {
+    border: 1px solid #ff5555;
+    color: #ff5555;
+    margin-bottom: 0;
+    &::placeholder {
+        color: #ff5555;
+    }
+}
+
+.errorMessage {
+    font-family: Roboto, 'sans-serif';
+    font-style: italic;
+    color: #ff5555;
+    max-height: 20px;
+    min-height: 20px;
+}
