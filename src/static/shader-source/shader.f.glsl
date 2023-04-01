@@ -12,12 +12,17 @@ uniform float   hpPerc;
 //1 hp
 
 void drawHP (void);
+void drawMeshProc (void);
 
 void main(void) {
     if (drawType == 1) {
         drawHP();
     } else if (drawType == 0) {
-        gl_FragColor = u_Color;
+        if (drawMesh) {
+            drawMeshProc();
+        } else {
+            gl_FragColor = u_Color;
+        }
     }
 }
 
@@ -39,4 +44,18 @@ void drawHP (void) {
     } else {
         gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
     }
+}
+
+void drawMeshProc(void) {
+    float period = 7.0;
+    float width = 0.015;
+    float modX = mod(pass_Pos.x, period);
+    float modY = mod(pass_Pos.y, period);
+
+    if (modX < (period-width) && modX > width && modY < (period-width) && modY > width) {
+        gl_FragColor = u_Color;
+    } else {
+        gl_FragColor = vec4(1.0, 0.4745, 0.7765, 1.0);
+    }
+
 }

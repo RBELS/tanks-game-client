@@ -25,7 +25,7 @@ class Background extends Model {
 
         this.player = player
         this.playerMatrixBundle = player.matrices
-        const vertices = getMapArrBuffer(10.0)
+        const vertices = getMapArrBuffer(50.0)
         this.arrBuffer = gl.createBuffer()!
         gl.bindBuffer(gl.ARRAY_BUFFER, this.arrBuffer)
         gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
@@ -49,11 +49,12 @@ class Background extends Model {
 
 
         gl.uniform2fv(this.uLocations['playerPos'], this.player.pos)
-        gl.uniform1i(this.uLocations['drawMesh'], 1) //not 0 stands for true; 0 stands for false
     }
 
     public draw(): void {
         const { gl } = this
+
+        gl.uniform1i(this.uLocations['drawMesh'], 1) //not 0 stands for true; 0 stands for false
 
         gl.bindBuffer(this.gl.ARRAY_BUFFER, this.arrBuffer)
         gl.vertexAttribPointer(this.aLocations['aPos'], 2, this.gl.FLOAT, false, 0, 0)
@@ -62,6 +63,8 @@ class Background extends Model {
         gl.uniform4fv(this.uLocations['u_Color'], new Vector4(40/255, 42/255, 54/255, 1))
 
         gl.drawArrays(this.gl.TRIANGLES, 0, 6);
+
+        gl.uniform1i(this.uLocations['drawMesh'], 0)
     }
 
 
