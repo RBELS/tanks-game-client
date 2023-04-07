@@ -6,11 +6,11 @@ import {GameMap} from '../models/gamemap'
 import {TBulletState} from "./api/api-types";
 
 class Controller {
-    private static readonly ROTATE_SPEED = 80 // DEG/SEC
-    private static readonly TOP_ROTATE_SPEED = 160 // DEG/SEC
+    public static readonly ROTATE_SPEED = 80 // DEG/SEC
+    public static readonly TOP_ROTATE_SPEED = 160 // DEG/SEC
     public static MOVEMENT_SPEED = 6 // UNITS/SEC
-    private static readonly ALLOWED_KEYSET = new Set<string>(['w', 's', 'a', 'd'])
-    private static readonly BULLET_V = 20.0
+    public static readonly ALLOWED_KEYSET = new Set<string>(['w', 's', 'a', 'd'])
+    public static readonly BULLET_V = 20.0
 
     private keySet: Set<string>
     private player: Player
@@ -18,7 +18,6 @@ class Controller {
     private connection: WebsocketConnection
     private readonly mousePos: number[]
 
-    private _lastUpdated?: number
 
     constructor(gamemap: GameMap, connection: WebsocketConnection) {
         this.keySet = new Set<string>()
@@ -27,14 +26,6 @@ class Controller {
         this.mousePos = [0, 0]
         this.bullets = gamemap.bullets
         this.prepareController()
-    }
-
-    get lastUpdated(): number {
-        return this._lastUpdated!
-    }
-
-    set lastUpdated(value: number) {
-        this._lastUpdated = value
     }
 
     private prepareController() {
@@ -88,18 +79,7 @@ class Controller {
         return toDegrees(angle)
     }
 
-    public update() {
-        if (this._lastUpdated == undefined) this._lastUpdated = Date.now()
-
-        const currentTime = Date.now() + latency
-        const deltaTime = (currentTime - this._lastUpdated) / 1000
-        this._lastUpdated = currentTime
-
-        const moveDistance = deltaTime*Controller.MOVEMENT_SPEED
-        this.player.move(moveDistance)
-
-        this.player.rotateBody(deltaTime*Controller.ROTATE_SPEED)
-        this.player.rotateTop(deltaTime*Controller.TOP_ROTATE_SPEED)
+    public update(deltaTime: number) {
 
         this.bullets.forEach(bullet => {
             if (!bullet.dir) {

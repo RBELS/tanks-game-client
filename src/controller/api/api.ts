@@ -22,6 +22,8 @@ class WebsocketConnection {
     private actingPlayer: Player
     private _allPlayers: Map<string, Player>
     private hpBarDrawer?: HPBarDrawer
+    private lastUpdated?: number
+
 
     constructor(gameMap: GameMap) {
         this.gameMap = gameMap
@@ -124,7 +126,20 @@ class WebsocketConnection {
     }
 
     public updateWithPredictions(): void {
-        this._controller.update()
+        if (this.lastUpdated == undefined) this.lastUpdated = Date.now()
+
+        const currentTime = Date.now() + latency
+        const deltaTime = (currentTime - this.lastUpdated) / 1000
+        this.lastUpdated = currentTime
+
+        this._controller.update(deltaTime)
+        for (const somePlayer of this._allPlayers.values()) {
+            // if (so)
+            const moveDistance = deltaTime*Controller.MOVEMENT_SPEED
+            somePlayer.move(moveDistance)
+            somePlayer.rotateBody(deltaTime*Controller.ROTATE_SPEED)
+            somePlayer.rotateTop(deltaTime*Controller.TOP_ROTATE_SPEED)
+        }
     }
 
 
